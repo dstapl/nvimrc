@@ -4,5 +4,5 @@ return {
 	require("plugins.nvim-treesitter"),
 	require("plugins.vim-fugitive"),
 	require("plugins.vim-be-good"),
+	require("plugins.presence"),
 }
-
