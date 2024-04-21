@@ -52,7 +52,9 @@ cs.config = function ()
 				-- Current line number
 				lavender = "#b4befe",
 			}
-		}
+		},
+		-- Compile for speed
+		compile_path = vim.fn.stdpath "cache" .. "/catppuccin"
 	}
 	-- Set base catppuccin colourscheme
 	vim.cmd.colorscheme("catppuccin-mocha")
