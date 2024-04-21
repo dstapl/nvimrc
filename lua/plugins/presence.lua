@@ -5,7 +5,7 @@ return {
 			-- Rich Presence text options ,
 				show_time = false,
 				--  An editable file is loaded in the buffer (either string or function(filename: string): string)
-				editing_text = "Manipulating the bits of  \r\n%s",
+				editing_text = "Manipulating bits",
 				--  Browsing a file explorer (either string or function(file_explorer_name: string): string)
 				file_explorer_text  = "Navigating inodes",
 				--  Committing changes in git (either string or function(filename: string): string)
