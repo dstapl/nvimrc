@@ -77,7 +77,7 @@ local function lineinfo()
 		return ""
 	end
 	--	return " %P %l:%c "
-	return " %l:%c "
+	return " %l:%c " -- Line number & col
 end
 
 Statusline = {}

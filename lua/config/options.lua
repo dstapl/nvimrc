@@ -42,6 +42,27 @@ vim.g.netrw_banner = 0
 vim.g.netrw_browse_split = 0
 vim.g.netrw_winsize = 25
 
+-- Set overrides for specific files
+local wrap_files = {
+	'markdown',
+}
+
+-- Want maximum colorcolumn and the difference between the remaining columns
+for _, filetype in ipairs(wrap_files) do
+	local au_name = string.format("WrapLineIn%sFile", filetype)
+	local col_l = vim.opt.colorcolumn:get()
+	local wrap_m = math.max(0, vim.fn.winwidth(0) - (col_l[0] or col_l[1]))
+	local nvim_au_exec = string.format([[
+		augroup %s
+			autocmd!
+			autocmd FileType %s setlocal wrap
+			autocmd FileType %s setlocal wrapmargin=%s
+		augroup END
+	]], au_name, filetype, filetype, wrap_m
+	)
+	vim.api.nvim_exec(nvim_au_exec, false)
+end
+
 -- Set <Leader>
 vim.g.mapleader = " "
 

@@ -5,6 +5,7 @@ return {
 	require("plugins.vim-fugitive"),
 	require("plugins.vim-be-good"),
 	require("plugins.presence"),
+	require("plugins.luasnip"),
 	require("plugins.lsp"),
 	require("plugins.cloak"),
 }
