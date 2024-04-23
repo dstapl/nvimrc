@@ -6,4 +6,5 @@ return {
 	require("plugins.vim-be-good"),
 	require("plugins.presence"),
 	require("plugins.lsp"),
+	require("plugins.cloak"),
 }

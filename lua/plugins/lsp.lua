@@ -8,6 +8,8 @@ return {
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-cmdline",
         "hrsh7th/nvim-cmp",
+		"L3MON4D3/LuaSnip",
+        "saadparwaiz1/cmp_luasnip",
         "j-hui/fidget.nvim",
     },
 	config = function()
@@ -33,24 +35,41 @@ return {
                         capabilities = capabilities
                     }
                 end,
+				["lua_ls"] = function() -- Disable warnings undefined global vim
+                    require("lspconfig").lua_ls.setup {
+                        capabilities = capabilities,
+                        settings = {
+                            Lua = {
+                                diagnostics = {
+                                    globals = { "vim", "it", "describe", "before_each", "after_each" },
+                                }
+                            }
+                        }
+                    }
+                end,
             }
         })
-
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
         cmp.setup({
+			snippet = {
+                expand = function(args)
+                    require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                end,
+            },
             mapping = cmp.mapping.preset.insert({
 				-- Match with Telescope shortcuts
                 ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
                 ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
 				-- Need to configure snippet engine for confirm to work
-                -- ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-                ["<C-Space>"] = cmp.mapping.complete(),
+                ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
+                ["<C-y>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
-                { name = 'nvim_lsp' },
+                { name = 'nvim_lsp', max_item_count = 12 },
+				{ name = 'luasnip', max_item_count = 4 },
             }, {
-                { name = 'buffer' },
+                { name = 'buffer', max_item_count = 4 },
             })
         })
 

@@ -1,7 +1,7 @@
 vim.keymap.set(
 	{
 		"n",
-		"v" 
+		"v"
 	},
 	"<Leader>y",
 	'"+y',
@@ -13,7 +13,7 @@ vim.keymap.set(
 vim.keymap.set(
 	{
 		"n",
-		"v" 
+		"v"
 	},
 	"<Leader>p",
 	'"+p',
