@@ -11,6 +11,23 @@ return {
 		"L3MON4D3/LuaSnip",
         "saadparwaiz1/cmp_luasnip",
         "j-hui/fidget.nvim",
+
+		-- Disable unused LSP clients
+		{
+			  "zeioth/garbage-day.nvim",
+			  dependencies = "neovim/nvim-lspconfig",
+			  event = "VeryLazy",
+			  opts = {
+				excluded_lsp_clients = {
+					"null-ls",
+					"jdtls",
+				},
+
+				-- Ensure grace_period > timeout/1000
+				grace_period = 60*3, -- Seconds (Minutes)
+				wakeup_delay = 500, -- Milliseconds before reactiving
+			  }
+		},
     },
 	config = function()
         local cmp = require('cmp')
@@ -62,8 +79,8 @@ return {
                 ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
                 ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
 				-- Need to configure snippet engine for confirm to work
-                ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
-                ["<C-y>"] = cmp.mapping.complete(),
+                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+                ["<C-Y>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
                 { name = 'nvim_lsp', max_item_count = 12 },

@@ -1,4 +1,2 @@
-require("config.options")
-require("config.keymaps")
-require("config.statusline")
-require("plugins.lazy")
+require("config") -- Should not depend on plugins
+require("plugins.lazy") -- Load plugin manager

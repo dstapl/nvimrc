@@ -1,5 +1,5 @@
 return {
-	'nvim-treesitter/nvim-treesitter', 
+	'nvim-treesitter/nvim-treesitter',
 	build = ":TSUpdate",
 	event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
 	config = function ()
@@ -8,12 +8,10 @@ return {
 				"vimdoc", "lua", "rust", "bash", "latex", "bibtex", "json",
 				"markdown",
 			},
-			
 			sync_install = false,
 
 			-- Set to false if `tree-sitter` CLI is not intsalled locally
 			auto_install = true,
-			
 			highlight = { -- Consistent syntax highlighting
 				enable = true,
 				disable = {},-- List of disabled *parsers*

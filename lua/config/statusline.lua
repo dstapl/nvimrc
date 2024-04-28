@@ -103,7 +103,7 @@ function Statusline.inactive()
 end
 
 function Statusline.short()
-	return "%#StatusLineNC#   NvimTree"
+	return "%#StatusLineNC# TelescopePrompt"
 end
 
 -- Autogroups for active, inactive, short
@@ -112,6 +112,6 @@ vim.api.nvim_exec([[
   au!
   au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
   au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
-  au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
   augroup END
 ]], false)
+-- au WinEnter,BufEnter,FileType TelescopePrompt setlocal statusline=%!v:lua.Statusline.short()
