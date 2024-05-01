@@ -3,7 +3,7 @@ local cs = {
 	name = "catppuccin",
 	lazy = false,
 	-- Only with lazy = true
-	-- priority = 1000
+	priority = 1000
 }
 
 -- local mocha = {

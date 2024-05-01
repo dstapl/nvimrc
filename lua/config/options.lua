@@ -37,6 +37,10 @@ vim.opt.updatetime = 1000 -- Unstable at lower values than ~1000
 -- Don't colour characters past column limit (Soft char limit)
 vim.opt.colorcolumn = "80"
 
+
+vim.opt.visualbell = false
+
+
 -- Edit netrw file explorer
 vim.g.netrw_banner = 0
 vim.g.netrw_browse_split = 0
