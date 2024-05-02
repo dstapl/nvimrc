@@ -67,6 +67,7 @@ for _, filetype in ipairs(wrap_files) do
 	vim.api.nvim_exec(nvim_au_exec, false)
 end
 
+
 -- Set <Leader>
 vim.g.mapleader = " "
 

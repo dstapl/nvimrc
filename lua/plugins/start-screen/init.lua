@@ -4,12 +4,12 @@ return {
 	lazy = false,
 	config = true,
 	opts  = {
-		splash_enabled = true,
+		splash_enabled = false,
 		number = 1,
 		-- Available (TODO: Make sure this is up to date):
 		-- Note: "Random" will find any of the (sub)directories to choose
 		-- {"Academics","Aurum", "Logos"}
-		category = "Academics" -- TODO: Implement "Random"
+		category = "Logos" -- TODO: Implement "Random"
 	},
 	priority = 1000,
 	-- samodostal/image is not maintained
@@ -33,7 +33,7 @@ return {
 						-- Both options must be enabled for
 						-- background_color to work
 						foreground_color = true,
-						background_color = false
+						background_color = true
 					},
 					events = {
 						update_on_nvim_resize = false,

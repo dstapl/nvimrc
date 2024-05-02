@@ -13,6 +13,7 @@ return {
                     -- This can be a table to match multiple file patterns.
                     file_pattern = {
                         ".env*",
+						"*credentials*",
 						"*config*",
                     },
                     -- Match an equals sign and any character after it.
@@ -20,6 +21,7 @@ return {
                     -- example: cloak_pattern = { ":.+", "-.+" } for yaml files.
                     cloak_pattern = {
 						"=.+",
+						":.+",
 					},
                 },
             },

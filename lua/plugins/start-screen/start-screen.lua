@@ -1,6 +1,6 @@
 --local PLUGIN_NAME = vim.fn.expand("%:t:r")
 local PLUGIN_NAME = "start-screen"
-local autocmd_group = vim.api.nvim_create_augroup(PLUGIN_NAME, {})
+-- local autocmd_group = vim.api.nvim_create_augroup(PLUGIN_NAME, {})
 local imDir = vim.fn.stdpath("data") .. "\\" .. PLUGIN_NAME
 
 local function choose_image(dir)
