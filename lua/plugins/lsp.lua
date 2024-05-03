@@ -28,8 +28,8 @@ return {
 				},
 
 				-- Ensure grace_period > timeout/1000
-				grace_period = 60*3, -- Seconds (Minutes)
-				wakeup_delay = 500, -- Milliseconds before reactiving
+				grace_period = 60*2, -- Seconds (Minutes)
+				wakeup_delay = 600, -- Milliseconds before reactiving
 			  }
 		},
     },
@@ -48,7 +48,7 @@ return {
             ensure_installed = { -- Define LSPs
                 "lua_ls",
                 "rust_analyzer",
-				"pyright",
+				-- "pyright",
             },
             handlers = {
                 function(server_name) -- Default handler 
@@ -62,7 +62,8 @@ return {
                         settings = {
                             Lua = {
                                 diagnostics = {
-                                    globals = { "vim", "it", "describe", "before_each", "after_each" },
+-- Ignore global variables from Vimscript
+globals = { "vim", "it", "describe", "before_each", "after_each" },
                                 }
                             }
                         }
@@ -84,13 +85,16 @@ return {
                 ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
 				-- Need to configure snippet engine for confirm to work
                 ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-                ["<C-Y>"] = cmp.mapping.complete(),
+               -- Unsure of use 
+               -- ["<C-Y>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
+                -- Same settings as VSCode
                 { name = 'nvim_lsp', max_item_count = 12 },
 				{ name = 'luasnip', max_item_count = 4 },
             }, {
-                { name = 'buffer', max_item_count = 4 },
+                -- Only top 3 most recent buffers
+                { name = 'buffer', max_item_count = 3 },
             })
         })
 
