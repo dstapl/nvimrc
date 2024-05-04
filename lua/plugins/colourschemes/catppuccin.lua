@@ -69,26 +69,6 @@ cs.config = function ()
 	-- Set base Catppuccin colourscheme
 	vim.cmd.colorscheme("catppuccin-mocha")
 
-	-- Highlight options are available at
-    -- :so $VIMRUNTIME/syntax/hitest.vim
-	--
-	-- NC terms are for inactive windows
-	-- Change background of number pane (Left pane)
-	local black_base = "#000000"
-	vim.cmd([[ hi LineNr guibg=]] .. black_base)
-	vim.cmd([[ hi CursorLineNr guibg=]] .. black_base)
-	vim.cmd([[ hi SignColumn guibg=]] .. black_base)
-	-- Change statusline
-	-- StatusLine, StatusLineNC, NvimTreeStatuslineNc, NeoTreeStatusLineNC
-	-- Defaults:
-	-- guifg=#cdd6f4 guibg=#181825
-	-- guifg=#454659 guibg=#181825 
-	-- guifg=#181825 guibg=#181825
-	-- guifg=#181825 guibg=#181825
-	local black_accent = "#11111b"
-	local white_accent = "#cdd6f4"
-	vim.cmd([[ hi StatusLine guibg=]] .. white_accent .. " guifg=" .. black_accent)
-	vim.cmd([[ hi StatusLineNC guibg=]] .. black_accent .. " guifg=" .. white_accent)
 end
 
 return cs
