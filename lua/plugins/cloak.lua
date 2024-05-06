@@ -6,7 +6,7 @@ return {
             cloak_character = "*",
             -- The applied highlight group (colors) on the cloaking, see `:h highlight`.
             highlight_group = "Comment",
-			cloak_telescope = true,
+			cloak_telescope = false,
             patterns = {
                 {
                     -- Match any file starting with ".env".
@@ -14,7 +14,9 @@ return {
                     file_pattern = {
                         ".env*",
 						"*credentials*",
-						"*config*",
+						-- Don't match lspconfig
+						-- Can add additional words through `|` operator
+						"*.git/config",
                     },
                     -- Match an equals sign and any character after it.
                     -- This can also be a table of patterns to cloak,

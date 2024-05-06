@@ -5,9 +5,10 @@ local modules = {}
 
 -- Table for faster lookup of missing keys
 local excluded = { -- Excluded module names. 'init' is mandatory
-	init = true,
+	--init = true,
 	lazy = true,
 	presence = true,
+	['vim-fugitive'] = true,
 }
 
 local function is_excluded(name)
@@ -19,8 +20,11 @@ for _, plugname in ipairs(luafiles) do
 	-- Filters against *%.txt.+
 	local name = plugname:match("\\([^\\%.]*).lua$")
 	-- Skip non-lua files
-	if (name ~= nil) and not is_excluded(name)  then
+	if (name ~= nil) and not ( (name == "init") or (name == "lazy") ) then
 		modules[#modules+1] = require("plugins." .. name)
+		if is_excluded(name) then
+			modules[#modules].enabled = false
+		end
 	end
 end
 
