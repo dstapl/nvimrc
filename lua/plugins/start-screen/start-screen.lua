@@ -1,9 +1,9 @@
---local PLUGIN_NAME = vim.fn.expand("%:t:r")
 local PLUGIN_NAME = "start-screen"
 -- local autocmd_group = vim.api.nvim_create_augroup(PLUGIN_NAME, {})
-local imDir = vim.fn.stdpath("data") .. "\\" .. PLUGIN_NAME
+local imDir = vim.fn.stdpath("data") .. "\\" ..PLUGIN_NAME
 
 local function choose_image(dir)
+	-- TODO: glob is bottleneck
 	local cwdContent = vim.split(vim.fn.glob(dir .."/*"), '\n', {trimempty=true})
 	local nfiles = #cwdContent
 	if nfiles == 0 then return nil end
@@ -13,9 +13,10 @@ local function choose_image(dir)
 	return fname
 end
 
-local function switch_to_image(dir, number)
-	local default_fname = imDir .. "\\" .. "Matt.png"
-	local fname = choose_image(dir) or default_fname
+local function switch_to_image(category, number, imDir)
+	local default_fname = imDir .. "/coconut.jpg"
+	local catDir = imDir .. "/" .. category
+	local fname = choose_image(catDir) or default_fname
 
 	-- Open the first file
 	vim.cmd.edit(fname)
@@ -41,14 +42,19 @@ local function setup(opts)
 --			callback = switch_to_image,
 --			once = true
 --		})
-		local default_category = "Academics"
-		local category = opts.category or default_category
-		local default_number = 1
-		local number = opts.number or default_number
-		switch_to_image(imDir .. "/" .. category, number)
+		local category = opts.category or "Academics"
+		local number = opts.number or 1
+		switch_to_image(category, number, imDir)
 	end
 end
 
-return {
-	setup = setup
-}
+
+
+if (vim.fn.isdirectory(imDir) == 0) then
+	return {setup = function() end}
+--executable adds ~10ms of startup time...
+--if (vim.fn.executable("ascii-image-converter") == 0) then
+--	return { setup = function(opts) end }
+else
+	return { setup = setup }
+end

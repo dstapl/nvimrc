@@ -1,10 +1,12 @@
 return {
 	dir = "plugins.start-screen",
 	main  = "plugins.start-screen.start-screen",
+	--event = "VeryLazy",
 	lazy = false,
 	config = true,
 	opts  = {
-		splash_enabled = false,
+		-- URGENT: When true this is enabling lspconfig??
+		splash_enabled = true,
 		number = 1,
 		-- Available (TODO: Make sure this is up to date):
 		-- Note: "Random" will find any of the (sub)directories to choose

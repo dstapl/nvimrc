@@ -14,12 +14,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
---	{
---		--dir = [[~\start-screen]],
---		"start-screen",
---		--main = "plugins/start-screen",
---		lazy = false,
---	},
 	require("plugins.start-screen"),
 	require("plugins.colourschemes"),
 	require("plugins")
