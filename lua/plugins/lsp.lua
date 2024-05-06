@@ -1,6 +1,12 @@
 return {
 	"neovim/nvim-lspconfig",
-	event = "BufReadPost",
+	-- Update based on installed lsp servers
+	--event = "BufReadPost",
+	ft = { 
+		--"lua",
+		"rs",
+		"py"
+	},
 	dependencies = {
 		"williamboman/mason.nvim",
 		"williamboman/mason-lspconfig.nvim",

@@ -13,8 +13,27 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup({
+local plugins = {
 	require("plugins.start-screen"),
 	require("plugins.colourschemes"),
 	require("plugins")
-})
+}
+
+local opts = {
+	performance = {
+		rtp = {
+		disabled_plugins = {
+        "gzip",
+        -- "matchit",
+        -- "matchparen",
+        -- "netrwPlugin", -- netrw is useful
+        "tarPlugin",
+        "tohtml",
+        -- "tutor",
+        "zipPlugin",
+      },
+	},
+	}
+}
+
+require("lazy").setup(plugins, opts)

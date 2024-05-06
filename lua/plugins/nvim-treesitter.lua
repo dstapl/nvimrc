@@ -1,7 +1,8 @@
 return {
 	'nvim-treesitter/nvim-treesitter',
 	build = ":TSUpdate",
-	event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
+	--event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
+	ft = {"lua", "rs", "sh", "bash", "tex", "bib", "json", "md"},
 	config = function ()
 		require("nvim-treesitter.configs").setup({
 			ensure_installed = {

@@ -19,8 +19,8 @@ return {
 	dependencies = {
 		{
 			'samodostal/image.nvim',
-			lazy = false,
-			priority = 1000,
+			--lazy = false,
+			--priority = 1000,
 			dependencies = {
 				'nvim-lua/plenary.nvim',
 				{ "m00qek/baleia.nvim", tag = 'v1.4.0' }

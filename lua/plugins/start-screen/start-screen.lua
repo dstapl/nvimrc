@@ -1,6 +1,6 @@
 local PLUGIN_NAME = "start-screen"
 -- local autocmd_group = vim.api.nvim_create_augroup(PLUGIN_NAME, {})
-local imDir = vim.fn.stdpath("data") .. "\\" ..PLUGIN_NAME
+local imDir = vim.fn.stdpath("data") .. "/" .. PLUGIN_NAME
 
 local function choose_image(dir)
 	-- TODO: glob is bottleneck
@@ -19,7 +19,8 @@ local function switch_to_image(category, number, imDir)
 	local fname = choose_image(catDir) or default_fname
 
 	-- Open the first file
-	vim.cmd.edit(fname)
+	-- TODO: This alone takes 10-20ms
+	--vim.cmd.edit(fname)
 
 	-- TODO: Not working
 	-- if number > 1 then

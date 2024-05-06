@@ -59,11 +59,12 @@ cs.config = function ()
 				base = "#12121c"
 			},
 		},
-		compile_path = vim.fn.stdpath("cache") .. "/catppuccin",
-		integrations = {
-			telescope = true,
-			harpoon = true,
-		}
+		compile_path = vim.fn.stdpath("cache") .. "catppuccin"
+		--Not sure if these have any effect
+		--integrations = {
+		--	telescope = true,
+		--	harpoon = true,
+		--}
 	}
 
 	-- Set base Catppuccin colourscheme
