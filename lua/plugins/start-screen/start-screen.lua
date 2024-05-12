@@ -20,7 +20,7 @@ local function switch_to_image(category, number, imDir)
 
 	-- Open the first file
 	-- TODO: This alone takes 10-20ms
-	--vim.cmd.edit(fname)
+	vim.cmd.edit(fname)
 
 	-- TODO: Not working
 	-- if number > 1 then

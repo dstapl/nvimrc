@@ -3,16 +3,43 @@ return {
 	main  = "plugins.start-screen.start-screen",
 	--event = "VeryLazy",
 	lazy = false,
-	config = true,
 	opts  = {
 		-- URGENT: When true this is enabling lspconfig??
-		splash_enabled = true,
+		splash_enabled = false,
 		number = 1,
 		-- Available (TODO: Make sure this is up to date):
 		-- Note: "Random" will find any of the (sub)directories to choose
 		-- {"Academics","Aurum", "Logos"}
-		category = "Logos" -- TODO: Implement "Random"
+		category = "Academics", -- TODO: Implement "Random"
+		colour = true,
 	},
+	-- config = true,
+	config = function (_, opts) 
+		local colour_enabled = not not opts.colour
+
+		if (not not opts.splash_enabled) and colour_enabled then 
+			require("baleia").setup({})
+		end
+
+		require("image").setup({
+			render = {
+				min_padding = 5,
+				show_label = true,
+				show_image_dimensions = false,
+				use_dither = false,
+				-- Both options must be enabled for
+				-- background_color to work
+				foreground_color = colour_enabled,
+				background_color = colour_enabled,
+			},
+			events = {
+				update_on_nvim_resize = false,
+			}
+
+		})
+
+		require("plugins.start-screen.start-screen").setup(opts)
+	end,
 	priority = 1000,
 	-- samodostal/image is not maintained
 	-- requires TheZoraiz/ascii-image-converter
@@ -23,25 +50,8 @@ return {
 			--priority = 1000,
 			dependencies = {
 				'nvim-lua/plenary.nvim',
-				{ "m00qek/baleia.nvim", tag = 'v1.4.0' }
 			},
-			config = function ()
-			require('image').setup {
-					render = {
-						min_padding = 5,
-						show_label = true,
-						show_image_dimensions = false,
-						use_dither = false,
-						-- Both options must be enabled for
-						-- background_color to work
-						foreground_color = true,
-						background_color = true
-					},
-					events = {
-						update_on_nvim_resize = false,
-					}
-				}
-			end
+			lazy = true,
 		}
 	},
 }

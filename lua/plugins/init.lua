@@ -9,6 +9,7 @@ local excluded = { -- Excluded module names. 'init' is mandatory
 	lazy = true,
 	presence = true,
 	['vim-fugitive'] = true,
+	--baleia = true,
 }
 
 local function is_excluded(name)
