@@ -10,15 +10,21 @@ return {
 		-- Available (TODO: Make sure this is up to date):
 		-- Note: "Random" will find any of the (sub)directories to choose
 		-- {"Academics","Aurum", "Logos"}
-		category = "Academics", -- TODO: Implement "Random"
+		category = "Random", -- TODO: Implement "Random"
 		colour = true,
 	},
 	-- config = true,
-	config = function (_, opts) 
-		local colour_enabled = not not opts.colour
+	config = function (_, opts)
+		local colour_enabled = false
+		if not opts.splash_enabled then
+			-- Splash screen is disabled
+			return
+		else
+			colour_enabled = not not opts.colour
 
-		if (not not opts.splash_enabled) and colour_enabled then 
-			require("baleia").setup({})
+			if colour_enabled then
+				require("baleia").setup({})
+			end
 		end
 
 		require("image").setup({

@@ -1,21 +1,25 @@
 local PLUGIN_NAME = "start-screen"
--- local autocmd_group = vim.api.nvim_create_augroup(PLUGIN_NAME, {})
-local imDir = vim.fn.stdpath("data") .. "/" .. PLUGIN_NAME
+local imDir = vim.fn.stdpath("data") .. "\\" .. PLUGIN_NAME
+
+local function choose_random(arr)
+	local length = #arr
+
+	if length == 0 then
+		return nil
+	end
+
+	return arr[math.random(1, length)]
+end
 
 local function choose_image(dir)
 	-- TODO: glob is bottleneck
 	local cwdContent = vim.split(vim.fn.glob(dir .."/*"), '\n', {trimempty=true})
-	local nfiles = #cwdContent
-	if nfiles == 0 then return nil end
-
-	local fname = cwdContent[math.random(1, nfiles)]
-
-	return fname
+	return choose_random(cwdContent)
 end
 
-local function switch_to_image(category, number, imDir)
-	local default_fname = imDir .. "/coconut.jpg"
-	local catDir = imDir .. "/" .. category
+local function switch_to_image(category, number, dir)
+	local default_fname = dir .. "/coconut.jpg"
+	local catDir = dir .. "/" .. category
 	local fname = choose_image(catDir) or default_fname
 
 	-- Open the first file
@@ -33,19 +37,39 @@ local function switch_to_image(category, number, imDir)
 	-- end
 end
 
+local function remove_value(arr, val)
+	for index, value in ipairs(arr) do
+		if val == value then
+			table.remove(arr, index)
+		end
+	end
+
+	return arr
+end
+
 local function setup(opts)
 	-- Need to initialise random number generator
 	math.randomseed(os.time())
 
 	if not not opts.splash_enabled then
---		vim.api.nvim_create_autocmd("VimEnter", {
---			group = autocmd_group,
---			callback = switch_to_image,
---			once = true
---		})
-		local category = opts.category or "Academics"
 		local number = opts.number or 1
-		switch_to_image(category, number, imDir)
+		local category = opts.category or "Academics"
+
+		if category ~= 'Random' then
+			switch_to_image(category, number, imDir)
+		else
+			-- Chose random category (dir) from list of directories
+			local cmd = 'dir /AD-H/B "' .. imDir .. '"'
+			local dirs = vim.split(vim.fn.system(cmd), '\n', {trimempty=true})
+			local chosen = choose_random(dirs)
+			if chosen == nil then
+					-- Shouldn't run
+					return
+			end
+
+			switch_to_image(chosen, number, imDir)
+		end
+
 	end
 end
 

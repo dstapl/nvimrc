@@ -2,8 +2,8 @@ return {
 	"neovim/nvim-lspconfig",
 	-- Update based on installed lsp servers
 	--event = "BufReadPost",
-	ft = { 
-		--"lua",
+	ft = {
+		"lua",
 		"rs",
 		"py"
 	},
@@ -44,7 +44,7 @@ return {
 			ensure_installed = { -- Define LSPs
 				"lua_ls",
 				"rust_analyzer",
-				-- "pyright",
+				"pyright",
 			},
 			handlers = {
 				function(server_name) -- Default handler 
