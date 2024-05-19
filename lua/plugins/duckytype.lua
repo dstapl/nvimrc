@@ -1,12 +1,6 @@
 return {
 	"kwakzalver/duckytype.nvim",
 	keys = "<Leader>tt",
-	init = function()
-		-- Set keybind to start, and restart
-		vim.keymap.set("n", "<Leader>tt", "<cmd>DuckyType<CR>")
-		vim.keymap.set("n", "<Leader>tq", "<cmd>q<CR>")
-		vim.keymap.set("n", "<Leader>tr", "<cmd>q<CR><cmd>DuckyType<CR>")
-	end,
 	cmd="DuckyType",
 	opts = {
 		number_of_words = 25,
@@ -20,5 +14,13 @@ return {
 		},
 	},
 	lazy = true,
-	config = true,
+	--config = true,
+	config = function (_, opts)
+		require("duckytype").setup(opts)
+
+		-- Set keybind to start, and restart
+		vim.keymap.set("n", "<Leader>tt", "<cmd>DuckyType<CR>")
+		vim.keymap.set("n", "<Leader>tq", "<cmd>q<CR>")
+		vim.keymap.set("n", "<Leader>tr", "<cmd>q<CR><cmd>DuckyType<CR>")
+	end
 }
