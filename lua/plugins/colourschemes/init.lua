@@ -32,7 +32,7 @@ end
 my_colours()
 
 local function choose_cs(name)
-	local dir = vim.fn.stdpath("config") .. "\\lua\\plugins\\colourschemes" 
+	local dir = vim.fn.stdpath("config") .. "\\lua\\plugins\\colourschemes"
 	local css  = vim.split(vim.fn.glob(dir .."/*"), '\n', {trimempty=true})
 	-- Need to ignore current file
 	local fullpath = dir .. "\\".. name .. ".lua"
