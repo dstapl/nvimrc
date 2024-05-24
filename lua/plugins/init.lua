@@ -9,7 +9,7 @@ local excluded = { -- Excluded module names. 'init' is mandatory
 	lazy = true,
 	presence = true,
 	['vim-fugitive'] = true,
-	['hardtime'] = true,
+	--['hardtime'] = true,
 	--baleia = true,
 }
 
@@ -18,7 +18,6 @@ local function is_excluded(name)
 end
 
 for _, plugname in ipairs(luafiles) do
---for k=1, #luafiles do local plugname = luafiles[k];
 	-- Get file name
 	-- Filters against *%.txt.+
 	local name = plugname:match("\\([^\\%.]*).lua$")

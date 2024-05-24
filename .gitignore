@@ -1,4 +1,4 @@
-lua/plugins/start-screen/opts.lua
+# lua/plugins/start-screen/opts.lua
 *.log
 *env*
 *credentials*

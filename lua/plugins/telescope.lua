@@ -17,6 +17,18 @@ return {
 --				}
 --			}
 --			}
+--			defaults = {
+--				For linux users
+--				preview = {
+--					filesize_hook = function(filepath, bufnr, opts)
+--						local max_bytes = 10000
+--						-- powershell Get-Content README.md -Head 4
+--						-- This is so inefficient...
+--						local cmd ={"head", "-c", max_bytes, filepath}
+--						require('telescope.previewers.utils').job_maker(cmd, bufnr, opts)
+--					end
+--				},
+--			}
 		})
 
 		local builtin = require('telescope.builtin')

@@ -19,6 +19,7 @@ local function my_colours()
 	local white_accent = "#cdd6f4"
 	vim.cmd([[ hi StatusLine guibg=]] .. white_accent .. " guifg=" .. black_accent)
 	vim.cmd([[ hi StatusLineNC guibg=]] .. black_accent .. " guifg=" .. white_accent)
+	return true
 end
 
 local function contains(haystack, needle)
@@ -29,7 +30,6 @@ local function contains(haystack, needle)
 	end
 end
 
-my_colours()
 
 local function choose_cs(name)
 	local dir = vim.fn.stdpath("config") .. "\\lua\\plugins\\colourschemes"
@@ -41,10 +41,15 @@ local function choose_cs(name)
 	end
 end
 
-local cs = "catppuccin"
+my_colours()
+
+local cs = "vscode"
 local M =  choose_cs(cs)
+
 if M == nil then
-	error("Invalid colourscheme: " .. cs)
+	print("Invalid colourscheme: " .. cs)
+	my_colours()
+	return {}
 else
 	return M
 end
