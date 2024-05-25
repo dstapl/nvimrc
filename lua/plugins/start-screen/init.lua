@@ -18,7 +18,7 @@ return {
 			end
 		end
 
-		require("image").setup({
+		require("image").setup({ -- Need to load before
 			render = {
 				min_padding = 5,
 				show_label = true,
@@ -38,17 +38,4 @@ return {
 		require("plugins.start-screen.start-screen").setup(opts)
 	end,
 	priority = 1000,
-	-- samodostal/image is not maintained
-	-- requires TheZoraiz/ascii-image-converter
-	dependencies = {
-		{
-			'samodostal/image.nvim',
-			--lazy = false,
-			--priority = 1000,
-			dependencies = {
-				'nvim-lua/plenary.nvim',
-			},
-			lazy = true,
-		}
-	},
 }

@@ -6,6 +6,8 @@ return {
 	-- Available (TODO: Make sure this is up to date):
 	-- Note: "Random" will find any of the (sub)directories to choose
 	-- {"Academics","Aurum", "Logos"}
-	category = "Random", -- TODO: Implement "Random"
+	category = "Logos", -- TODO: Implement "Random"
 	colour = true,
+	-- samodostal/image is not maintained
+	-- requires TheZoraiz/ascii-image-converter
 }
