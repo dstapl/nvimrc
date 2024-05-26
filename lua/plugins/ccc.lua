@@ -11,7 +11,7 @@ return {
 			-- lsp = true,
 		},
 	},
-	config = function (opts)
+	config = function (_, opts)
 		require("ccc").setup(opts)
 
 		vim.keymap.set("n", "<Leader>cp", "<cmd>CccPick<CR>")

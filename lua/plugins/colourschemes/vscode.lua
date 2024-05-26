@@ -9,7 +9,7 @@ return {
 			-- style = 'light'
 
 			-- Enable transparent background
-			transparent = false,
+			transparent = true,
 
 			-- Enable italic comment
 			italic_comments = true,

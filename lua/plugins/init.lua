@@ -7,13 +7,14 @@ local modules = {}
 local excluded = { -- Excluded module names. 'init' is mandatory
 	init = true,
 	lazy = true,
-	-- Any defined already in lazy.lua
-	["start-screen"] = true,
-	["colourschemes"] = true,
-	presence = true,
+	-- Other plugins
+	--presence = true,
 	['vim-fugitive'] = true,
 	--['hardtime'] = true,
 	--baleia = true,
+	-- Any defined already in lazy.lua
+	["start-screen"] = true,
+	["colourschemes"] = true,
 }
 
 local function is_excluded(name)

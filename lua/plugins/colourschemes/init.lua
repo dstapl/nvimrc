@@ -90,7 +90,13 @@ function ColourMe(name)
 	local status, M = pcall(require, "plugins.colourschemes." .. name)
 
 	if status then
-		M.config()
+		local opts = M.opts or {}
+		-- opts can be table *or* function
+		if type(opts) == "function" then
+			opts = opts()
+		end
+
+		M.config(nil,opts)
 	else
 		print("Invalid colourscheme: " .. name)
 	end

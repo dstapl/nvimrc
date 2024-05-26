@@ -15,5 +15,6 @@ return {
 		-- Ensure grace_period > timeout/1000
 		grace_period = 60*2, -- Seconds (Minutes)
 		wakeup_delay = 600, -- Milliseconds before reactiving
-	}
+	},
+	config = true,
 }
