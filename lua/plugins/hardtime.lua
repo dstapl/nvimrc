@@ -26,11 +26,12 @@ local DISABLED_FILETYPES = {
 }
 
 -- Doesn't seem to have any effect
-local ADD_FILETYPES = {
+local ADD_DISABLED = {
 	"harpoon",
 }
 
-for _, ft in pairs(ADD_FILETYPES) do
+-- Add more filetypes to the disabled list
+for _, ft in pairs(ADD_DISABLED) do
 	DISABLED_FILETYPES[#DISABLED_FILETYPES+1] = ft
 end
 

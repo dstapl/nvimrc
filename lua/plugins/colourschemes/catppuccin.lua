@@ -6,6 +6,7 @@ local cs = {
 	priority = 1000
 }
 
+
 -- local mocha = {
 -- 	rosewater = "#f5e0dc",
 -- 	flamingo = "#f2cdcd",
@@ -36,40 +37,44 @@ local cs = {
 -- }
 
 
+cs.opts = {
+	transparent_background = false,
+	-- Show ~ lines at the end of buffer
+	show_end_of_buffer = true,
+	color_overrides = {
+		-- all = {
+		-- 	text = "#ffffff",
+		-- },
+		mocha  = {
+			-- Left pane (Number pane)
+			--base = "#000000",
+			-- General line numbers
+			surface1 = "#454659",
+			-- Current line number
+			lavender = "#b4befe",
+			base = "#12121c"
+		},
+	},
+	compile_path = vim.fn.stdpath("cache") .. "catppuccin"
+	--Not sure if these have any effect
+	--integrations = {
+	--	telescope = true,
+	--	harpoon = true,
+	--}
+}
+
+
 -- Overrides
-cs.config = function ()
+cs.config = function (_, opts)
 	-- if config.colorscheme ~= "catppuccin" then
 	-- 	return false
 	-- end
-	require("catppuccin").setup {
-		transparent_background = false,
-		-- Show ~ lines at the end of buffer
-		show_end_of_buffer = true,
-		color_overrides = {
-			-- all = {
-			-- 	text = "#ffffff",
-			-- },
-			mocha  = {
-				-- Left pane (Number pane)
-				--base = "#000000",
-				-- General line numbers
-				surface1 = "#454659",
-				-- Current line number
-				lavender = "#b4befe",
-				base = "#12121c"
-			},
-		},
-		compile_path = vim.fn.stdpath("cache") .. "catppuccin"
-		--Not sure if these have any effect
-		--integrations = {
-		--	telescope = true,
-		--	harpoon = true,
-		--}
-	}
+	require("catppuccin").setup(opts)
 
 	-- Set base Catppuccin colourscheme
 	vim.cmd.colorscheme("catppuccin-mocha")
 
 end
+
 
 return cs

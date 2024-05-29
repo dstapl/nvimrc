@@ -22,13 +22,6 @@ local function my_colours()
 	return true
 end
 
---local function contains(haystack, needle)
---	for _, el in ipairs(haystack) do
---		if el == needle then
---			return true
---		end
---	end
---end
 
 local function get_file_name(file)
 	local fp = file:match("[^%\\%/]*%.lua$") -- Windows \\, Linux \/
@@ -76,35 +69,38 @@ local function choose_cs(name)
 	local css = all[1]
 	local found = all[2]
 
-	if found == false then
-		print("Invalid colourscheme: " .. cs_name)
-		my_colours()
-		return {}
-	else
+	if found == true then
 		return css
 	end
+
+	-- Use default (defined) colours
+	-- If colourscheme is not in the list of files
+	print("Invalid colourscheme: " .. cs_name)
+	my_colours()
+	return {}
 end
 
 
 function ColourMe(name)
 	local status, M = pcall(require, "plugins.colourschemes." .. name)
 
-	if status then
-		local opts = M.opts or {}
-		-- opts can be table *or* function
-		if type(opts) == "function" then
-			opts = opts()
-		end
-
-		M.config(nil,opts)
-	else
+	if not not status then
 		print("Invalid colourscheme: " .. name)
+		return
 	end
+
+	local opts = M.opts or {}
+
+	-- opts can be table *or* function
+	if type(opts) == "function" then
+		opts = opts()
+	end
+
+	M.config(nil,opts)
 end
 
 
 vim.api.nvim_create_user_command("ColourMe", function (opts) ColourMe(opts.args) end, {nargs = 1})
-
 
 
 -- E.g., "catppuccin", "vscode"
