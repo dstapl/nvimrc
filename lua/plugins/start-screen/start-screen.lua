@@ -37,15 +37,15 @@ local function switch_to_image(category, number, dir)
 	-- end
 end
 
-local function remove_value(arr, val)
-	for index, value in ipairs(arr) do
-		if val == value then
-			table.remove(arr, index)
-		end
-	end
-
-	return arr
-end
+--local function remove_value(arr, val)
+--	for index, value in ipairs(arr) do
+--		if val == value then
+--			table.remove(arr, index)
+--		end
+--	end
+--
+--	return arr
+--end
 
 local function setup(opts)
 	-- Need to initialise random number generator

@@ -7,14 +7,20 @@ local modules = {}
 local excluded = { -- Excluded module names. 'init' is mandatory
 	init = true,
 	lazy = true,
+
+	-- Any defined already in lazy.lua
+	["start-screen"] = true,
+	["colourschemes"] = true,
+
+
 	-- Other plugins
 	--presence = true,
 	['vim-fugitive'] = true,
 	--['hardtime'] = true,
 	--baleia = true,
-	-- Any defined already in lazy.lua
-	["start-screen"] = true,
-	["colourschemes"] = true,
+	["garbage-day"] = true,
+	hardtime = true,
+
 }
 
 for _, plugname in ipairs(luafiles) do

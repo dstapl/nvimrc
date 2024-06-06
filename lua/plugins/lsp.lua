@@ -5,7 +5,8 @@ return {
 	ft = {
 		"lua",
 		"rs",
-		"py"
+		"py",
+		"zig", "zir", --"zig.zon", -- For zig build system
 	},
 	dependencies = {
 		"williamboman/mason.nvim",
@@ -14,7 +15,7 @@ return {
 		"hrsh7th/cmp-cmdline",
 		{
 			"hrsh7th/nvim-cmp",
-			event = "InsertEnter",
+			event = {"InsertEnter","CmdLineEnter"},
 			dependencies = {
 				"hrsh7th/cmp-nvim-lsp",
 				"hrsh7th/cmp-buffer",
@@ -50,6 +51,7 @@ return {
 				"lua_ls",
 				"rust_analyzer",
 				"pyright",
+				"zls",
 				},
 				handlers = {
 					function(server_name) -- Default handler 
@@ -96,6 +98,7 @@ return {
 					-- Only top 3 most recent buffers
 					{ name = 'buffer', max_item_count = 3 },
 				})
+
 			},
 		}
 	end,
@@ -106,6 +109,18 @@ return {
 		local cmp = require('cmp')
 
 		cmp.setup(opts.cmp)
+		vim.keymap.set("n",
+		'<Leader>sd',
+		--function()
+		--	if cmp.visible_docs() then
+		--		cmp.close_docs()
+		--	else
+		--		cmp.open_docs()
+		--	end
+		--end
+		vim.lsp.buf.hover
+		)
+
 
 		vim.diagnostic.config({
 			float = {
