@@ -60,7 +60,7 @@ return {
 						}
 					end,
 					["lua_ls"] = function() -- Disable warnings undefined global vim
-						lspconfig.lua_ls.setup {
+						lspconfig.lua_ls.setup({
 							capabilities = capabilities,
 							settings = {
 								Lua = {
@@ -70,8 +70,19 @@ return {
 									}
 								}
 							},
-						}
+						})
 					end,
+					zls = function ()
+						lspconfig.zls.setup({
+							capabilities = capabilities,
+							settings = {
+								Lua = {
+									format_on_save = false, -- true
+								},
+							}
+						})
+						vim.g.zig_fmt_autosave = 0 -- Disable location list
+					end
 				}
 			},
 			cmp = {

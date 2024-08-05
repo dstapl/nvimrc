@@ -1,25 +1,83 @@
 return {
-	'andweeb/presence.nvim',
+	"vyfor/cord.nvim",
 	--lazy = true,
+	build = ".\\build",
 	event = "VeryLazy",
-	enabled = false,
+	enabled = true,
 	opts = {
-		-- Rich Presence text options ,
-		show_time = false,
-		--  An editable file is loaded in the buffer (either string or function(filename: string): string)
-		editing_text = "Coding",
-		--  Browsing a file explorer (either string or function(file_explorer_name: string): string)
-		file_explorer_text = "Browsing files",
-		--  Committing changes in git (either string or function(filename: string): string)
-		git_commit_text = "Uploading",
-		--  Managing plugins (either string or function(plugin_manager_name: string): string)
-		-- plugin_manager_text = "Managing plugins",
-		--  A read-only or unmodifiable file is loaded in the buffer (either string or function(filename: string): string)
-		reading_text = "Reading",
-		--  In a git repository (either string or function(project_name: string|nil, filename: string): string)
-		workspace_text = "Remote",
-		--  `enable_line_number` is set to true (either string or function(line_number: number, line_count: number): string)
-		-- line_number_text    = "Line %s out of %s",
-	},
+		--! USER COMMANDS
+		--:CordConnect - Initialize presence client internally and connect to Discord
+		--:CordReconnect - Reconnect to Discord
+		--:CordDisconnect - Disconnect from Discord
+		--:CordTogglePresence - Toggle presence
+		--:CordShowPresence - Show presence
+		--:CordHidePresence - Hide presence
+		--:CordToggleIdle - Toggle idle status
+		--:CordIdle - Show idle status
+		--:CordUnidle - Hide idle status and reset the timeout
+		--:CordWorkspace <name> - Change the name of the workspace (visually)
+		usercmds = true,                              -- Enable user commands
+		timer = {
+			enable = true,                              -- Enable automatically updating presence
+			interval = 1500,                            -- Interval between presence updates in milliseconds (min 500)
+			reset_on_idle = false,                      -- Reset start timestamp on idle
+			reset_on_change = false,                    -- Reset start timestamp on presence change
+		},
+		editor = {
+			image = nil,                                -- Image ID or URL in case a custom client id is provided
+			client = 'neovim',                          -- vim, neovim, lunarvim, nvchad, astronvim or your application's client id
+			tooltip = 'The Superior Text Editor',       -- Text to display when hovering over the editor's image
+		},
+		display = {
+			show_time = true,                           -- Display start timestamp
+			show_repository = true,                     -- Display 'View repository' button linked to repository url, if any
+			show_cursor_position = false,               -- Display line and column number of cursor's position
+			swap_fields = false,                        -- If enabled, workspace is displayed first
+			workspace_blacklist = {},                   -- List of workspace names to hide
+		},
+		lsp = {
+			show_problem_count = false,                 -- Display number of diagnostics problems
+			severity = 1,                               -- 1 = Error, 2 = Warning, 3 = Info, 4 = Hint
+			scope = 'workspace',                        -- buffer or workspace
+		},
+		idle = {
+			enable = true,                              -- Enable idle status
+			show_status = true,                         -- Display idle status, disable to hide the rich presence on idle
+			timeout = 1800000,                          -- Timeout in milliseconds after which the idle status is set, 0 to display immediately
+			disable_on_focus = true,                    -- Do not display idle status when neovim is focused
+			text = 'Idle',                              -- Text to display when idle
+			tooltip = '💤',                             -- Text to display when hovering over the idle image
+		},
+		text = {
+			viewing = 'Viewing {}',                     -- Text to display when viewing a readonly file
+			editing = 'Editing {}',                     -- Text to display when editing a file
+			file_browser = 'Browsing files',      -- Text to display when browsing files (Empty string to disable)
+			plugin_manager = 'Managing plugins',  -- Text to display when managing plugins (Empty string to disable)
+			--lsp_manager = 'Configuring LSP in {}',      -- Text to display when managing LSP servers (Empty string to disable)
+			lsp_manager = "",
+			--vcs = 'Committing changes in {}',           -- Text to display when using Git or Git-related plugin (Empty string to disable)
+			vcs = "",
+			workspace = 'In {}',                        -- Text to display when in a workspace (Empty string to disable)
+		},
+		buttons = {
+			{
+				label = 'View Repository',                -- Text displayed on the button
+				url = 'git',                              -- URL where the button leads to ('git' = automatically fetch Git repository URL)
+			},
+			-- {
+			--   label = 'View Plugin',
+			--   url = 'https://github.com/vyfor/cord.nvim',
+			-- }
+		},
+		assets = {                                    -- Custom file icons
+		-- lazy = {                                 -- Vim filetype or file name or file extension = table or string (see wiki)*
+		--   name = 'Lazy',                         -- Optional override for the icon name, redundant for language types
+		--   icon = 'https://example.com/lazy.png', -- Rich Presence asset name or URL
+		--   tooltip = 'lazy.nvim',                 -- Text to display when hovering over the icon
+		--   type = 2,                              -- 0 = language, 1 = file browser, 2 = plugin manager, 3 = lsp manager, 4 = vcs; defaults to language
+		-- },
+		-- ['Cargo.toml'] = 'crates',
+		},
+	};
 	config = true,
 }
