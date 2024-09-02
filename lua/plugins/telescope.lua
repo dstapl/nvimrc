@@ -1,7 +1,7 @@
 return {
 	'nvim-telescope/telescope.nvim', tag = '0.1.6',
 	dependencies = { 'nvim-lua/plenary.nvim' },
-	keys = "<Leader>ff",
+	keys = {"<Leader>ff", "<Leader>fg"},
 	opts = {
 --		find_files = {
 --		mappings = {
@@ -35,5 +35,6 @@ return {
 		local builtin = require('telescope.builtin')
 --		vim.keymap.set('n', '<leader>ff', function () builtin.find_files({hidden = true, no_ignore = true}) end)
 		vim.keymap.set('n', '<leader>ff', function () builtin.find_files({no_ignore = true}) end)
+		vim.keymap.set('n', '<leader>fg', function () builtin.live_grep({no_ignore = true}) end)
 	end
 }
