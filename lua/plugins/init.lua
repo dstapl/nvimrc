@@ -9,7 +9,7 @@ local excluded = { -- Excluded module names. 'init' is mandatory
 	lazy = true,
 
 	-- Any defined already in lazy.lua
-	["start-screen"] = true,
+	--["start-screen"] = true,
 	["colourschemes"] = true,
 
 
