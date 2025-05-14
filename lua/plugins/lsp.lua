@@ -1,7 +1,7 @@
 return {
 	"neovim/nvim-lspconfig",
 	-- Update based on installed lsp servers
-	--event = "BufReadPost",
+	event = "BufReadPost",
 	ft = {
 		"lua",
 		"rs",
@@ -120,17 +120,18 @@ return {
 		local cmp = require('cmp')
 
 		cmp.setup(opts.cmp)
-		vim.keymap.set("n",
-		'<Leader>sd',
-		--function()
-		--	if cmp.visible_docs() then
-		--		cmp.close_docs()
-		--	else
-		--		cmp.open_docs()
-		--	end
-		--end
-		vim.lsp.buf.hover
-		)
+		-- ALREADY ASSIGNED TO `K` by nvim-lspconfig
+		-- vim.keymap.set("n",
+		-- '<Leader>sd',
+		-- --function()
+		-- --	if cmp.visible_docs() then
+		-- --		cmp.close_docs()
+		-- --	else
+		-- --		cmp.open_docs()
+		-- --	end
+		-- --end
+		-- vim.lsp.buf.hover
+		-- )
 
 
 		vim.diagnostic.config({

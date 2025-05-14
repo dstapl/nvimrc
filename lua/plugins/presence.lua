@@ -1,7 +1,7 @@
 return {
 	"vyfor/cord.nvim",
 	--lazy = true,
-	build = ".\\build",
+	-- build = ".\\build",
 	event = "VeryLazy",
 	enabled = true,
 	opts = {
@@ -17,35 +17,32 @@ return {
 		--:CordUnidle - Hide idle status and reset the timeout
 		--:CordWorkspace <name> - Change the name of the workspace (visually)
 		usercmds = true,                              -- Enable user commands
-		timer = {
+		timestamp = {
 			enable = true,                              -- Enable automatically updating presence
-			interval = 1500,                            -- Interval between presence updates in milliseconds (min 500)
+			-- Intervals are now real-time, no interval needed
 			reset_on_idle = false,                      -- Reset start timestamp on idle
 			reset_on_change = false,                    -- Reset start timestamp on presence change
 		},
 		editor = {
-			image = nil,                                -- Image ID or URL in case a custom client id is provided
+			icon = nil,                                 -- Image ID or URL in case a custom client id is provided
 			client = 'neovim',                          -- vim, neovim, lunarvim, nvchad, astronvim or your application's client id
 			tooltip = 'The Superior Text Editor',       -- Text to display when hovering over the editor's image
 		},
 		display = {
+			-- theme = ?
 			show_time = true,                           -- Display start timestamp
-			show_repository = true,                     -- Display 'View repository' button linked to repository url, if any
-			show_cursor_position = false,               -- Display line and column number of cursor's position
+		    -- show_repository handled through text
+            -- show_cursor_position ditto
 			swap_fields = false,                        -- If enabled, workspace is displayed first
-			workspace_blacklist = {},                   -- List of workspace names to hide
+			-- workspace_blacklist handled through hooks/functions
 		},
-		lsp = {
-			show_problem_count = false,                 -- Display number of diagnostics problems
-			severity = 1,                               -- 1 = Error, 2 = Warning, 3 = Info, 4 = Hint
-			scope = 'workspace',                        -- buffer or workspace
-		},
+		-- lsp now handled through plugins e.g., diagnostics
 		idle = {
-			enable = true,                              -- Enable idle status
+			enabled = true,								-- Enable idle status
 			show_status = true,                         -- Display idle status, disable to hide the rich presence on idle
 			timeout = 1800000,                          -- Timeout in milliseconds after which the idle status is set, 0 to display immediately
-			disable_on_focus = true,                    -- Do not display idle status when neovim is focused
-			text = 'Idle',                              -- Text to display when idle
+			ignore_focus = false,                       -- Do not display idle status when neovim is focused
+			details = 'Idle',                              -- Text to display when idle
 			tooltip = '💤',                             -- Text to display when hovering over the idle image
 		},
 		text = {

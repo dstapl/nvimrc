@@ -1,7 +1,7 @@
 return {
 	'nvim-treesitter/nvim-treesitter',
 	build = ":TSUpdate",
-	--event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
+	event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
 	ft = {"lua", "rs", "sh", "bash", "tex", "bib", "json", "md", "zig", "zon",
 		"yaml", "yml",},
 	opts = {
