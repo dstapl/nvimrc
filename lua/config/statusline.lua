@@ -82,8 +82,10 @@ end
 
 Statusline = {}
 
-Statusline.active = function()
+Statusline.active = function(icon)
+	icon = icon or ""
 	return table.concat {
+		icon,
 		"%#Statusline#",
 		--    update_mode_colors(),
 		mode(),
@@ -107,11 +109,24 @@ function Statusline.short()
 end
 
 -- Autogroups for active, inactive, short
-vim.api.nvim_exec([[
-  augroup Statusline
-  au!
-  au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
-  au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
-  augroup END
-]], false)
+-- vim.api.nvim_exec([[
+--   augroup Statusline
+--   au!
+--   au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
+--   au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
+--   augroup END
+-- ]], false)
+
+local statusline_group = vim.api.nvim_create_augroup("Statusline", { clear = true })
+vim.api.nvim_create_autocmd({"WinEnter", "BufEnter"}, {
+	group = statusline_group, 
+	callback = function() return Statusline.active() end,
+})
+
+vim.api.nvim_create_autocmd({"WinLeave", "BufLeave"}, {
+	group = statusline_group,
+	callback = Statusline.inactive,
+})
 -- au WinEnter,BufEnter,FileType TelescopePrompt setlocal statusline=%!v:lua.Statusline.short()
+
+vim.opt_local.statusline = "%{%v:lua.Statusline.active()%}"

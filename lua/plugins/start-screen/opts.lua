@@ -10,7 +10,7 @@ return function()
 		-- Available (TODO: Make sure this is up to date):
 		-- Note: "Random" will find any of the (sub)directories to choose
 		-- {"Academics","Aurum", "Logos"}
-		category = "Logos", -- TODO: Implement "Random"
+		category = "Academics", -- TODO: Implement "Random"
 		colour = colour_enabled,
 		-- samodostal/image is not maintained
 		-- requires TheZoraiz/ascii-image-converter

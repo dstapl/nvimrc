@@ -29,3 +29,7 @@ vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename)
 -- Need to stop <leader>(<space>) moving the cursor
 vim.keymap.set('v', ' ', '')
 vim.keymap.set('v', '<Leader>r', '"hy:%s/<C-r>h//g<left><left>')
+
+
+-- Maybe get rid of this...Only really for closing start-screen
+vim.keymap.set("n", "<ESC><ESC>", "<CMD>bd<CR>")
