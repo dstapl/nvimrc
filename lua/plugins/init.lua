@@ -11,7 +11,7 @@ local excluded = { -- Excluded module names. 'init' is mandatory
 	-- Any defined already in lazy.lua
 	--["start-screen"] = true,
 	["colourschemes"] = true,
-
+	["status-animation"] = true,
 
 	-- Other plugins
 	--presence = true,
@@ -20,6 +20,10 @@ local excluded = { -- Excluded module names. 'init' is mandatory
 	--baleia = true,
 	["garbage-day"] = true,
 	hardtime = true,
+
+
+	-- TODO: Fix checkhealth of magma
+	jupyter = true,
 
 }
 

@@ -1,4 +1,5 @@
 lua/plugins/start-screen/opts.lua
+lua/plugins/status-animation/opt.lua
 *.log
 *env*
 *credentials*

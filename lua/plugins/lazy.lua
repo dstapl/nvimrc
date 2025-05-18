@@ -16,6 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 local plugins = {
 	require("plugins.start-screen"),
 	require("plugins.colourschemes"),
+	require("plugins.status-animation"),
 	require("plugins")
 }
 

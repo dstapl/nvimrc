@@ -7,6 +7,7 @@ return {
 		"rs",
 		"py",
 		"zig", "zir", --"zig.zon", -- For zig build system
+		"ipynb",
 	},
 	dependencies = {
 		"williamboman/mason.nvim",
@@ -132,6 +133,7 @@ return {
 		-- --end
 		-- vim.lsp.buf.hover
 		-- )
+		vim.keymap.set("n", "<Leader>sd", vim.diagnostic.open_float)
 
 
 		vim.diagnostic.config({
