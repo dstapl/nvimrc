@@ -77,9 +77,6 @@ local function sprite_placer(bufnr, frame, stop_options)
 		vim.opt_local.statusline = statusline_value
 	else
 
-		-- TODO(BUG): If *already* paused, then {remove = true}
-		-- does **NOT** clear the icon
-		-- Only if unpaused, then the icon is cleared
 		if remove then
 			-- Restore statusline
 			vim.opt_local.statusline = default_statusline
@@ -100,10 +97,24 @@ end
 
 function M._start_timer(bufnr, animation_name, repeat_delay)
 	if not vim.tbl_isempty(M._timers_by_bufnr[bufnr]) then
-		print('Aborting. TODO: Add option to force override timer.')
-		--TODO(ElPiloto): Add log message saying we're not turning timer on b/c already on.
-		print("TODO: Timer already enabled. Not starting.")
-		return false
+		-- TODO: Silent ignore?
+		-- print('Aborting. TODO: Add option to force override timer.')
+		-- --TODO(ElPiloto): Add log message saying we're not turning timer on b/c already on.
+		-- print("TODO: Timer already enabled. Not starting.")
+		
+		-- Delete current timer so it can be remade
+		M._timers_by_bufnr[bufnr] = nil
+
+		--return false
+	end
+
+
+	-- Make sure delay_ms is an integer
+	if (repeat_delay == nil)  then
+		error("Delay should be a positive integer. Got: `"..delay .. "` instead")
+	elseif (1 <= repeat_delay) then
+		-- Convert to integer
+		repeat_delay = math.floor(repeat_delay + 0.5)
 	end
 
 	-- TODO: Check this is ok?
@@ -140,6 +151,7 @@ function M._start_timer(bufnr, animation_name, repeat_delay)
 				sprite_placer(bufnr, icon, stop_options)
 			end
 
+			-- TODO: Decrease delay?
 			vim.defer_fn(finish_fn, 100)
 			M._should_stop_timers_by_bufnr[bufnr]['should_stop'] = false
 			M._timers_by_bufnr[bufnr] = nil
@@ -151,9 +163,11 @@ function M._start_timer(bufnr, animation_name, repeat_delay)
 		sprite_placer(bufnr, icon, stop_options)
 	end
 
-	local launch_delay_ms = 500
+	-- TODO: Why is this so high? (500ms?)
+	local launch_delay_ms = 100
 
-	table.insert(M._timers_by_bufnr[bufnr], true)
+	-- table.insert(M._timers_by_bufnr[bufnr], timer)
+	M._timers_by_bufnr[bufnr] = timer
 	M._current_animation = {animation_name, repeat_delay}
 	M._should_stop_timers_by_bufnr[bufnr]['should_stop'] = false
 	timer:start(launch_delay_ms, repeat_delay, vim.schedule_wrap(on_interval))
@@ -210,7 +224,9 @@ function M.resume_animated_status(bufnr)
 		-- Actually start the timer again
 		M._start_timer(bufnr, animation_name, delay_ms)
 	else
-		error("No current animation to resume")
+		-- TODO: Pause and stop don't error
+		-- Should this command error or not?
+		--error("No current animation to resume")
 	end
 
 end
@@ -243,7 +259,13 @@ function M.change_current_animation(animation_name, delay_ms)
 end
 
 M.setup = function (opts) -- config: require(...).setup(opts)
-	-- TODO
+	local starting_animation = opts["starting_animation"]
+	local delay = opts["repeat_delay"]
+
+	if starting_animation ~= nil then
+		-- Set current animation to the starting one
+		M.start_current_animation(starting_animation, delay)
+	end
 end
 
 return M
