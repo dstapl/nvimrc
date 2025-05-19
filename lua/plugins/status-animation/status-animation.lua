@@ -3,6 +3,8 @@
 -- HEAVILY INSPIRED BY https://github.com/ElPiloto/significant.nvim
 --
 --
+-- TODO: Create a ui window to scroll through the options for `change_animation`
+--
 local PLUGIN_NAME = "status-animation"
 
 local M = {}
@@ -19,6 +21,7 @@ M._loaded_icons = {}
 M._timers_by_bufnr = vim.defaulttable()
 M._should_stop_timers_by_bufnr = vim.defaulttable()
 M._animation_icons = vim.defaulttable()
+M._current_animation = vim.defaulttable() -- {name, delay}
 
 local ANIM_SIGN_PREFIX = 'AnimationIcon'
 
@@ -78,7 +81,11 @@ local function sprite_placer(bufnr, frame, stop_options)
 		-- does **NOT** clear the icon
 		-- Only if unpaused, then the icon is cleared
 		if remove then
+			-- Restore statusline
 			vim.opt_local.statusline = default_statusline
+			-- Remove from current animation
+			M._current_animation[bufnr] = vim.defaulttable()
+
 		elseif pause then
 			-- TODO: Just do nothing? (NOP?)
 		end
@@ -98,6 +105,10 @@ function M._start_timer(bufnr, animation_name, repeat_delay)
 		print("TODO: Timer already enabled. Not starting.")
 		return false
 	end
+
+	-- TODO: Check this is ok?
+	M.clear_stop_options(bufnr)
+
 	if not repeat_delay then
 		repeat_delay = 50
 	end
@@ -121,24 +132,12 @@ function M._start_timer(bufnr, animation_name, repeat_delay)
 
 		if count > MAX_COUNT or should_stop then
 			timer:close()
-		
-			local finish_fn = nil
 
 			-- TODO: This is kind of repeated at the bottom
 			local icon = frames[( (count - 1)  % #frames)+1]
-			-- Remove sign completely
-			if stop_options and (stop_options["remove"] or stop_options["pause"]) then
-				finish_fn = function()
-					sprite_placer(bufnr, icon, stop_options)
-				end
-			else
-				--Go back to first sign.
-				-- TODO: Reset count or not?
-				-- count = 0
-				icon = frames[1]
-				finish_fn = function()
-					sprite_placer(bufnr, icon, stop_options)
-				end
+
+			local finish_fn = function()
+				sprite_placer(bufnr, icon, stop_options)
 			end
 
 			vim.defer_fn(finish_fn, 100)
@@ -153,14 +152,17 @@ function M._start_timer(bufnr, animation_name, repeat_delay)
 	end
 
 	local launch_delay_ms = 500
+
 	table.insert(M._timers_by_bufnr[bufnr], true)
+	M._current_animation = {animation_name, repeat_delay}
 	M._should_stop_timers_by_bufnr[bufnr]['should_stop'] = false
 	timer:start(launch_delay_ms, repeat_delay, vim.schedule_wrap(on_interval))
+
 end
 
 
 function M.start_animated_status(bufnr, animation_name, delay_ms)
-	local bufnr = bufnr or vim.api.nvim_get_current_buf()
+	bufnr = bufnr or vim.api.nvim_get_current_buf()
 
 
 	M._start_timer(bufnr, animation_name, delay_ms)
@@ -190,6 +192,54 @@ function M.start_current_animation(animation_name, delay_ms)
 	local bufnr = vim.api.nvim_get_current_buf()
 
 	M.start_animated_status(bufnr, animation_name, delay_ms)
+end
+
+
+function M.clear_stop_options(bufnr)
+	M._should_stop_timers_by_bufnr[bufnr]['should_stop'] = false
+	M._should_stop_timers_by_bufnr[bufnr]['stop_options'] = {pause = false, remove = false}
+end
+
+function M.resume_animated_status(bufnr)
+	-- Resume animation
+	M.clear_stop_options(bufnr)
+
+	-- Get current animation
+	if next(M._current_animation) ~= nil then
+		local animation_name, delay_ms = unpack(M._current_animation)
+		-- Actually start the timer again
+		M._start_timer(bufnr, animation_name, delay_ms)
+	else
+		error("No current animation to resume")
+	end
+
+end
+
+function M.resume_current_animation()
+	local bufnr = vim.api.nvim_get_current_buf()
+
+	M.resume_animated_status(bufnr)
+end
+
+
+function M.change_animated_status(bufnr, animation_name, delay_ms)
+	-- Remove the current animation
+	M.stop_animated_status(bufnr, {remove = true})
+
+	-- TODO: Add 500ms(100ms?) delay between call
+	-- Start new animation
+	local start_timer = vim.loop.new_timer()
+		-- Delay 2000ms and 0 means "do not repeat"
+	start_timer:start(300, 0, vim.schedule_wrap(function()
+		M.start_animated_status(bufnr, animation_name, delay_ms)
+	end
+	))
+end
+
+function M.change_current_animation(animation_name, delay_ms)
+	local bufnr = vim.api.nvim_get_current_buf()
+
+	M.change_animated_status(bufnr, animation_name, delay_ms)
 end
 
 M.setup = function (opts) -- config: require(...).setup(opts)
