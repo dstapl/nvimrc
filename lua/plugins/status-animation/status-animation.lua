@@ -3,7 +3,11 @@
 -- HEAVILY INSPIRED BY https://github.com/ElPiloto/significant.nvim
 --
 --
--- TODO: Create a ui window to scroll through the options for `change_animation`
+-- TODO(feat): Create a ui window to scroll through the options for `change_animation`
+-- TODO(bug): If animation is set in one buffer. Then buffer changes to another file
+--	Then :AnimationStop, the buffer is not stopped.
+-- TODO(bug): Buffer not cleared if not the original buffer that the status was set in
+-- (e.g., when doing :vsp, the new buffer won't have its status cleared)
 --
 local PLUGIN_NAME = "status-animation"
 
@@ -37,7 +41,7 @@ local text_hls = {
 
 local function print_table(table, sep)
 	sep = sep or "\n"
-	big_string = ""
+	local big_string = ""
 	for _, data in ipairs(table) do
 		big_string = big_string .. data .. sep
 	end
@@ -101,7 +105,7 @@ function M._start_timer(bufnr, animation_name, repeat_delay)
 		-- print('Aborting. TODO: Add option to force override timer.')
 		-- --TODO(ElPiloto): Add log message saying we're not turning timer on b/c already on.
 		-- print("TODO: Timer already enabled. Not starting.")
-		
+
 		-- Delete current timer so it can be remade
 		M._timers_by_bufnr[bufnr] = nil
 

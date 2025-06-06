@@ -20,7 +20,7 @@ vim.keymap.set("n", "<Leader>d", [["_P]])
 -- TOOD: This has stopped working
 --vim.keymap.set("n", "<Leader>cl", "<cmd>CloakPreviewLine<CR>")
 -- Replaced with this for now instead
-vim.keymap.set("n", "<Leader>cl", "<cmd>CloakToggle<CR>")
+vim.keymap.set("n", "<Leader>cl", "<CMD>CloakToggle<CR>")
 
 -- LSP
 vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename)
@@ -33,3 +33,7 @@ vim.keymap.set('v', '<Leader>r', '"hy:%s/<C-r>h//g<left><left>')
 
 -- Maybe get rid of this...Only really for closing start-screen
 vim.keymap.set("n", "<ESC><ESC>", "<CMD>bd<CR>")
+
+
+-- Open system file-explorer at current buffer directory
+vim.keymap.set("n", "<Leader>ex", "<CMD>!start explorer %:h<CR><CR>")
