@@ -1,6 +1,6 @@
 -- Options file so git doesn't update splash_enabled value every commit
 return function()
-	local splash_enabled = false
+	local splash_enabled = true
 	local colour_enabled = true
 
 	return {
@@ -10,7 +10,7 @@ return function()
 		-- Available (TODO: Make sure this is up to date):
 		-- Note: "Random" will find any of the (sub)directories to choose
 		-- {"Academics","Aurum", "Logos"}
-		category = "Academics", -- TODO: Implement "Random"
+		category = "Logos", -- TODO: Implement "Random"
 		colour = colour_enabled,
 		-- samodostal/image is not maintained
 		-- requires TheZoraiz/ascii-image-converter
