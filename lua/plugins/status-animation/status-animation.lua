@@ -4,11 +4,15 @@
 --
 --
 -- TODO(feat): Create a ui window to scroll through the options for `change_animation`
--- TODO(bug): If animation is set in one buffer. Then buffer changes to another file
---	Then :AnimationStop, the buffer is not stopped.
--- TODO(bug): Buffer not cleared if not the original buffer that the status was set in
+-- TODO(NOTE / bug): Buffer icons are shared through the Statusline.icon property in ../../config/statusline.lua
+--		This is unwanted behaviour but the current API is cleaner. Want to support different buffers having different icons
+-- TODO(bug): Buffer animation not cleared if command ran in not the original buffer that the status was set in
 -- (e.g., when doing :vsp, the new buffer won't have its status cleared)
 --
+--
+--
+--
+-- URGENT BUG: ICONS ARE NOT SHOWING (custom statusline is disappearing)
 local PLUGIN_NAME = "status-animation"
 
 local M = {}
@@ -62,36 +66,38 @@ local function sprite_placer(bufnr, frame, stop_options)
 		pause = false
 	end
 
+
+	-- Handle status-animation
+	if not (remove or pause) then
+		-- Update icon
+		Statusline.change_icon(frame)
+		-- TODO: This is shared across all buffers...
+		-- WARNING: So far vim.b isn't working to set the value 
+		--	(i.e., vim.b[bufnr]...)
+		-- vim.opt_local.statusline = "%!v:lua.Statusline.active()"
+		-- vim.cmd("redrawstatus")
+	elseif pause then -- TODO: Just do nothing? (NOP?)
+
+	elseif remove then -- Otherwise restore default vim statusline (no icon)
+		-- Restore default statusline
+		Statusline.change_icon()
+		-- Remove from current animation
+		M._current_animation[bufnr] = vim.defaulttable()
+	end
+
 	-- Win/BufEnter statusline=%!v:lua.Statusline.active()
 	-- Win/BufLeave statusline=%!v:lua.Statusline.inactive()
 	local buffer_is_hidden = vim.fn.getbufinfo(bufnr)[1].hidden
-	local default_statusline = "ERROR status-animation:default_statusline"
+	local default_statusline = "ERROR status-animation:default_statusline" -- Placeholder
+
 	if buffer_is_hidden then
 		default_statusline = "%!v:lua.Statusline.inactive()"
 	else
 		default_statusline = "%!v:lua.Statusline.active()"
 	end
-	if not (remove or pause) then
-		local icon_character = "'"..frame.."'"
-		local statusline_value = '%!v:lua.Statusline.active('..icon_character..')'
+	vim.opt_local.statusline = default_statusline
 
-		-- TODO: This is shared across all buffers...
-		-- WARNING: So far vim.b isn't working to set the value 
-		--	(i.e., vim.b[bufnr]...)
-		vim.opt_local.statusline = statusline_value
-	else
-
-		if remove then
-			-- Restore statusline
-			vim.opt_local.statusline = default_statusline
-			-- Remove from current animation
-			M._current_animation[bufnr] = vim.defaulttable()
-
-		elseif pause then
-			-- TODO: Just do nothing? (NOP?)
-		end
 end
-	end
 
 -- For single instance of an animation (i.e. per buffer)
 local function make_loading_status(animation_name)
@@ -100,22 +106,26 @@ local function make_loading_status(animation_name)
 end
 
 function M._start_timer(bufnr, animation_name, repeat_delay)
-	if not vim.tbl_isempty(M._timers_by_bufnr[bufnr]) then
-		-- TODO: Silent ignore?
-		-- print('Aborting. TODO: Add option to force override timer.')
-		-- --TODO(ElPiloto): Add log message saying we're not turning timer on b/c already on.
-		-- print("TODO: Timer already enabled. Not starting.")
+	-- if not vim.tbl_isempty(M._timers_by_bufnr[bufnr]) then
+	-- 	-- TODO: Silent ignore?
+	-- 	-- print('Aborting. TODO: Add option to force override timer.')
+	-- 	-- --TODO(ElPiloto): Add log message saying we're not turning timer on b/c already on.
+	-- 	-- print("TODO: Timer already enabled. Not starting.")
+	--
+	-- 	-- Delete current timer so it can be remade
+	-- 	M._timers_by_bufnr[bufnr] = nil
+	--
+	-- 	--return false
+	-- end
 
-		-- Delete current timer so it can be remade
+	if M._timers_by_bufnr[bufnr] ~= nil then
 		M._timers_by_bufnr[bufnr] = nil
-
-		--return false
 	end
 
 
 	-- Make sure delay_ms is an integer
 	if (repeat_delay == nil)  then
-		error("Delay should be a positive integer. Got: `"..delay .. "` instead")
+		error("Delay should be a positive integer. Got: nil instead")
 	elseif (1 <= repeat_delay) then
 		-- Convert to integer
 		repeat_delay = math.floor(repeat_delay + 0.5)
@@ -172,7 +182,7 @@ function M._start_timer(bufnr, animation_name, repeat_delay)
 
 	-- table.insert(M._timers_by_bufnr[bufnr], timer)
 	M._timers_by_bufnr[bufnr] = timer
-	M._current_animation = {animation_name, repeat_delay}
+	M._current_animation[bufnr] = {animation_name, repeat_delay}
 	M._should_stop_timers_by_bufnr[bufnr]['should_stop'] = false
 	timer:start(launch_delay_ms, repeat_delay, vim.schedule_wrap(on_interval))
 
@@ -223,14 +233,14 @@ function M.resume_animated_status(bufnr)
 	M.clear_stop_options(bufnr)
 
 	-- Get current animation
-	if next(M._current_animation) ~= nil then
-		local animation_name, delay_ms = unpack(M._current_animation)
+	if next(M._current_animation[bufnr]) ~= nil then
+		local animation_name, delay_ms = unpack(M._current_animation[bufnr])
 		-- Actually start the timer again
 		M._start_timer(bufnr, animation_name, delay_ms)
 	else
 		-- TODO: Pause and stop don't error
 		-- Should this command error or not?
-		--error("No current animation to resume")
+		error("No current animation to resume")
 	end
 
 end

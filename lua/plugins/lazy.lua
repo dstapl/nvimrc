@@ -13,12 +13,29 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
-local plugins = {
-	require("plugins.start-screen"),
-	require("plugins.colourschemes"),
-	require("plugins.status-animation"),
-	require("plugins")
-}
+
+-- Include from USERDEF_PLUGINS.txt
+-- Typically list of folders
+-- TODO: Names
+-- TODO: Duplicated in `./init.lua`
+local userdef_filepath = vim.fn.stdpath("config") .. "/lua/plugins/USERDEF_PLUGINS.txt";
+local userdef_plugins_file = io.open(userdef_filepath, "r");
+local plugins = {};
+if not userdef_plugins_file then
+	-- Error
+	error("Could not open user defined plugins file: " .. userdef_plugins_file)
+else
+	-- Populate plugins list
+	local idx = 1;
+	for name in userdef_plugins_file:lines() do
+		plugins[idx] = require("plugins." .. name)
+		idx = idx + 1
+	end
+end
+userdef_plugins_file:close()
+
+-- Append "plugins" to the end of userdef list
+plugins[#plugins + 1] = require("plugins");
 
 local opts = {
 	performance = {

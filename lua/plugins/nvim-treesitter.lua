@@ -3,11 +3,11 @@ return {
 	build = ":TSUpdate",
 	event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
 	ft = {"lua", "rs", "sh", "bash", "tex", "bib", "json", "md", "zig", "zon",
-		"yaml", "yml", "ipynb"},
+		"yaml", "yml", "ipynb", "js", "javascript"},
 	opts = {
 		ensure_installed = {
 			"vimdoc", "lua", "rust", "bash", "latex", "bibtex", "json",
-			"markdown", "zig", "yaml",
+			"markdown", "zig", "yaml", "javascript",
 		},
 		sync_install = false,
 
@@ -27,6 +27,10 @@ return {
 		},
 
 	},
-	config = true,
+	-- config = true,
+	
+	config = function (_, opts)
+		
+	end,
 }
 

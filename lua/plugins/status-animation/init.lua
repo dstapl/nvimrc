@@ -1,9 +1,10 @@
 local PREFIX = "Animation"
-local command_names = {}
-command_names.change = PREFIX .. "Change"
-command_names.pause = PREFIX .. "Pause"
-command_names.resume = PREFIX .. "Resume"
-command_names.stop = PREFIX .. "STOP"
+local command_names = {
+	["change"] = PREFIX .. "Change",
+	["pause"] = PREFIX .. "Pause",
+	["resume"] = PREFIX .. "Resume",
+	["stop"] = PREFIX .. "STOP",
+}
 
 return {
 	dir = vim.fn.stdpath("config") .. "/lua/plugins/status-animation",
