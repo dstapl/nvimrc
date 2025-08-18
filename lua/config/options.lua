@@ -46,6 +46,23 @@ vim.g.netrw_banner = 0
 vim.g.netrw_browse_split = 0
 vim.g.netrw_winsize = 25
 
+
+-- Add/Override file type extensions
+-- TODO: Make into a table and for-loop iteration
+vim.filetype.add{{
+	extension = {
+		mc = "mc",
+	}
+}}
+
+vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
+    pattern = "*.mc",
+    callback = function()
+        vim.bo.filetype = "mc"
+    end,
+})
+
+
 -- Set overrides for specific files
 local wrap_files = {
 	'markdown',

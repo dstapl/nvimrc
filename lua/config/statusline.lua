@@ -30,6 +30,7 @@ local function mode()
 	return string.format(" %s ", modes[current_mode]):upper()
 end
 
+-- -- LEGACY
 -- local function update_mode_colors()
 --   local current_mode = vim.api.nvim_get_mode().mode
 --   local mode_color = "%#StatusLineAccent#"
@@ -81,11 +82,21 @@ local function lineinfo()
 end
 
 Statusline = {}
+Statusline.icon = ""
+Statusline.weather = ""
 
-Statusline.active = function(icon)
-	icon = icon or ""
+Statusline.change_icon = function(icon)
+	Statusline.icon = icon or ""
+end
+
+Statusline.change_weather = function(weather_report)
+	Statusline.weather = weather_report or ""
+end
+
+Statusline.active = function()
+	-- icon = icon or ""
 	return table.concat {
-		icon,
+		Statusline.icon,
 		"%#Statusline#",
 		--    update_mode_colors(),
 		mode(),
@@ -95,6 +106,7 @@ Statusline.active = function(icon)
 		"%#StatusLineNC#",
 		--    lsp(),
 		"%=%#StatusLineExtra#",
+		Statusline.weather,
 		filetype(),
 		lineinfo(),
 	}
@@ -119,8 +131,8 @@ end
 
 local statusline_group = vim.api.nvim_create_augroup("Statusline", { clear = true })
 vim.api.nvim_create_autocmd({"WinEnter", "BufEnter"}, {
-	group = statusline_group, 
-	callback = function() return Statusline.active() end,
+	group = statusline_group,
+	callback = Statusline.active,
 })
 
 vim.api.nvim_create_autocmd({"WinLeave", "BufLeave"}, {
@@ -129,4 +141,4 @@ vim.api.nvim_create_autocmd({"WinLeave", "BufLeave"}, {
 })
 -- au WinEnter,BufEnter,FileType TelescopePrompt setlocal statusline=%!v:lua.Statusline.short()
 
-vim.opt_local.statusline = "%{%v:lua.Statusline.active()%}"
+vim.opt_local.statusline = "%!v:lua.Statusline.active()"

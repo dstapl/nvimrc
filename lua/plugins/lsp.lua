@@ -8,6 +8,8 @@ return {
 		"py",
 		"zig", "zir", --"zig.zon", -- For zig build system
 		"ipynb",
+		"js",
+		"mc", -- Custom: Monkey C
 	},
 	dependencies = {
 		"williamboman/mason.nvim",
@@ -53,6 +55,7 @@ return {
 				"rust_analyzer",
 				"pyright",
 				"zls",
+				"eslint",
 				},
 				handlers = {
 					function(server_name) -- Default handler 
@@ -114,10 +117,32 @@ return {
 			},
 		}
 	end,
+
 	config = function(_, opts)
 		require("fidget").setup()
 		require("mason").setup()
 		require("mason-lspconfig").setup(opts["mason-lspconfig"])
+
+
+		-- Setup custom language servers
+		-- (Adapted from)
+		-- https://www.reddit.com/r/neovim/comments/12abfoh/comment/jzkoiih/
+		local lspconfig = require("lspconfig")
+		local configs = require("lspconfig.configs")
+		if not configs.monkeyc_lsp then
+			configs.monkeyc_lsp = {
+				default_config = {
+					-- TODO: Switch to `python3`?  
+					cmd = { 'python', 'C:/Coding/Garmin/monkeyc-lsp/lsp.py' },
+					root_dir = lspconfig.util.root_pattern('.git', ''),
+					filetypes = { "mc" },
+					settings = {} -- TODO: What goes here?
+				},
+			}
+		end
+		lspconfig.monkeyc_lsp.setup{}
+
+
 		local cmp = require('cmp')
 
 		cmp.setup(opts.cmp)
