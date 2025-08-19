@@ -72,7 +72,7 @@ return {
 
 		vim.api.nvim_create_user_command(command_names.pause,
 		function ()
-			animation.stop_current_animation({pause = true})
+			animation.stop_current_animation({pause = true, remove = false})
 		end, {nargs = 0})
 
 
