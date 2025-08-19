@@ -9,10 +9,6 @@
 -- TODO(bug): Buffer animation not cleared if command ran in not the original buffer that the status was set in
 -- (e.g., when doing :vsp, the new buffer won't have its status cleared)
 --
---
---
---
--- URGENT BUG: ICONS ARE NOT SHOWING (custom statusline is disappearing)
 local PLUGIN_NAME = "status-animation"
 
 local M = {}
@@ -74,7 +70,8 @@ local function sprite_placer(bufnr, frame, stop_options)
 		-- TODO: This is shared across all buffers...
 		-- WARNING: So far vim.b isn't working to set the value 
 		--	(i.e., vim.b[bufnr]...)
-		-- vim.opt_local.statusline = "%!v:lua.Statusline.active()"
+		vim.opt_local.statusline = "%!v:lua.Statusline.active()"
+		return
 		-- vim.cmd("redrawstatus")
 	elseif pause then -- TODO: Just do nothing? (NOP?)
 
@@ -87,7 +84,8 @@ local function sprite_placer(bufnr, frame, stop_options)
 
 	-- Win/BufEnter statusline=%!v:lua.Statusline.active()
 	-- Win/BufLeave statusline=%!v:lua.Statusline.inactive()
-	local buffer_is_hidden = vim.fn.getbufinfo(bufnr)[1].hidden
+	-- local buffer_is_hidden = vim.fn.getbufinfo(bufnr)[1].hidden
+	local buffer_is_hidden = vim.fn.bufwinnr(bufnr) == -1
 	local default_statusline = "ERROR status-animation:default_statusline" -- Placeholder
 
 	if buffer_is_hidden then
