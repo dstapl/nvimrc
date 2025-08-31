@@ -2,3 +2,4 @@ start-screen
 colourschemes
 status-animation
 weather
+strudel
