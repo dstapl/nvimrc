@@ -30,7 +30,6 @@ local excluded = { -- Excluded module names. 'init' is mandatory
 	-- Other plugins
 	--presence = true,
 	['vim-fugitive'] = true,
-	--['hardtime'] = true,
 	--baleia = true,
 	["garbage-day"] = true,
 	hardtime = true,
