@@ -21,7 +21,6 @@ end
 
 
 
-
 -- TODO: Hooks into current audio
 --	Taking input in function argument
 function M.visualize_waveform(data)
