@@ -1,5 +1,5 @@
 local PLUGIN_NAME = "start-screen"
-local imDir = vim.fn.stdpath("data") .. "\\" .. PLUGIN_NAME
+local imDir = vim.fn.stdpath("data") .. "/" .. PLUGIN_NAME
 
 local function choose_random(arr)
 	local length = #arr

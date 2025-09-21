@@ -30,6 +30,7 @@ local function mode()
 	return string.format(" %s ", modes[current_mode]):upper()
 end
 
+-- -- LEGACY
 -- local function update_mode_colors()
 --   local current_mode = vim.api.nvim_get_mode().mode
 --   local mode_color = "%#StatusLineAccent#"
@@ -81,11 +82,28 @@ local function lineinfo()
 end
 
 Statusline = {}
+-- Statusline.icon = ""
+Statusline.weather = "" -- Global across windows
 
-Statusline.active = function(icon)
-	icon = icon or ""
+-- Statusline.change_icon = function(icon)
+-- 	Statusline.icon = icon or ""
+-- end
+local function get_icon(winid)
+    local icon = vim.w[winid].statusline_icon or ""
+    return icon
+end
+
+Statusline.change_weather = function(weather_report)
+	Statusline.weather = weather_report or ""
+end
+
+Statusline.active = function()
+    -- Is this the current window the user is in? Or is it the window the function is called from
+    local winid = vim.api.nvim_get_current_win()
+    -- local icon = vim.w[winid].statusline_icon or ""
+	-- icon = icon or ""
 	return table.concat {
-		icon,
+		get_icon(winid),
 		"%#Statusline#",
 		--    update_mode_colors(),
 		mode(),
@@ -95,6 +113,7 @@ Statusline.active = function(icon)
 		"%#StatusLineNC#",
 		--    lsp(),
 		"%=%#StatusLineExtra#",
+		Statusline.weather,
 		filetype(),
 		lineinfo(),
 	}
@@ -117,16 +136,62 @@ end
 --   augroup END
 -- ]], false)
 
+
 local statusline_group = vim.api.nvim_create_augroup("Statusline", { clear = true })
+-- vim.api.nvim_create_autocmd({"WinEnter", "BufEnter"}, {
+-- 	group = statusline_group,
+-- 	callback = Statusline.active,
+-- })
+
+-- Autocmd for window enter to refresh statusline icon
 vim.api.nvim_create_autocmd({"WinEnter", "BufEnter"}, {
-	group = statusline_group, 
-	callback = function() return Statusline.active() end,
+    group = statusline_group,
+    callback = function(args)
+		-- local winid = vim.api.nvim_get_current_win()
+		--
+		--       if vim.w[winid].statusline_icon then
+		--           vim.api.nvim_set_option_value("statusline", "%!v:lua.Statusline.active()", {win = winid})
+		--       end
+
+		local winid = vim.api.nvim_get_current_win()
+
+        vim.api.nvim_set_option_value("statusline", "%!v:lua.Statusline.active()", {win = winid})
+
+
+        -- -- Update every open window (Less than 20 if other tabs are included - usually not, so 4)
+        -- for _, winid in ipairs(vim.api.nvim_list_wins()) do
+        --     if vim.w[winid].statusline_icon then -- Force update of statusline
+        --         vim.api.nvim_set_option_value("statusline", "%!v:lua.Statusline.active()", {win = winid})
+        --     end
+        -- end
+    end,
 })
 
+
+-- vim.api.nvim_create_autocmd({"WinLeave", "BufLeave"}, {
+-- 	group = statusline_group,
+-- 	callback = Statusline.inactive,
+-- })
 vim.api.nvim_create_autocmd({"WinLeave", "BufLeave"}, {
-	group = statusline_group,
-	callback = Statusline.inactive,
+    group = statusline_group,
+    callback = function(args)
+		local winid = vim.api.nvim_get_current_win()
+        vim.api.nvim_set_option_value("statusline", "%!v:lua.Statusline.inactive()", {win = winid})
+    end,
 })
--- au WinEnter,BufEnter,FileType TelescopePrompt setlocal statusline=%!v:lua.Statusline.short()
 
-vim.opt_local.statusline = "%{%v:lua.Statusline.active()%}"
+vim.api.nvim_create_autocmd("WinClosed", {
+    group = statusline_group,
+    callback = function(args)
+		-- local winid = vim.api.nvim_get_current_win()
+
+		-- Remove timer
+		-- TODO: Don't hardcode this name
+		vim.cmd("AnimationSTOP")
+
+        -- vim.api.nvim_set_option_value("statusline", "%!v:lua.Statusline.inactive()", {win = winid})
+    end,
+})
+
+-- au WinEnter,BufEnter,FileType TelescopePrompt setlocal statusline=%!v:lua.Statusline.short()
+vim.opt_local.statusline = "%!v:lua.Statusline.active()"
