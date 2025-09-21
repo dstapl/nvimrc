@@ -4,6 +4,10 @@ return {
 	event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
 	ft = {"lua", "rs", "sh", "bash", "tex", "bib", "json", "md", "zig", "zon",
 		"yaml", "yml", "ipynb"},
+	dependencies = {
+		require("plugins.context"),
+		-- {dir = vim.fn.stdpath("config") .. "/lua/plugins/context.lua"},
+	},
 	opts = {
 		ensure_installed = {
 			"vimdoc", "lua", "rust", "bash", "latex", "bibtex", "json",

@@ -1,6 +1,6 @@
 -- Options file so git doesn't update splash_enabled value every commit
 return function()
-	local splash_enabled = true
+	local splash_enabled = false
 	local colour_enabled = true
 
 	return {
