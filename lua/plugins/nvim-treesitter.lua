@@ -2,12 +2,12 @@ return {
 	'nvim-treesitter/nvim-treesitter',
 	build = ":TSUpdate",
 	event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
-	ft = {"lua", "rs", "sh", "bash", "tex", "bib", "json", "md", "zig", "zon",
-		"yaml", "yml", "ipynb", "js", "javascript"},
+	ft = {"lua", "rs", "sh", "tex", "bib", "json", "md", "zig", "zon",
+		"yaml", "yml", "ipynb", "js", "py"},
 	opts = {
 		ensure_installed = {
 			"vimdoc", "lua", "rust", "bash", "latex", "bibtex", "json",
-			"markdown", "zig", "yaml", "javascript",
+			"markdown", "zig", "yaml", "javascript", "python",
 		},
 		sync_install = false,
 
