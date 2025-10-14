@@ -1,16 +1,29 @@
-return {
-	"neovim/nvim-lspconfig",
-	-- Update based on installed lsp servers
-	event = "BufReadPost",
-	ft = {
+-- Define Mason packages
+local MASON_PKGS = {
+	"lua_ls",
+	"rust_analyzer",
+	"pyright",
+	"zls",
+	"eslint",
+	"tinymist",
+}
+
+-- Update based on installed Mason packages
+local FILETYPES = {
 		"lua",
 		"rs",
 		"py",
 		"zig", "zir", --"zig.zon", -- For zig build system
 		"ipynb",
 		"js",
+		"typ",
 		"mc", -- Custom: Monkey C
-	},
+}
+
+return {
+	"neovim/nvim-lspconfig",
+	event = "BufReadPost",
+	ft = FILETYPES,
 	dependencies = {
 		"williamboman/mason.nvim",
 		"williamboman/mason-lspconfig.nvim",
@@ -50,13 +63,8 @@ return {
 
 		return {
 			["mason-lspconfig"] = {
-				ensure_installed = { -- Define LSPs
-				"lua_ls",
-				"rust_analyzer",
-				"pyright",
-				"zls",
-				"eslint",
-				},
+				ensure_installed = MASON_PKGS,
+				-- Extra customisation
 				handlers = {
 					function(server_name) -- Default handler 
 						lspconfig[server_name].setup {
