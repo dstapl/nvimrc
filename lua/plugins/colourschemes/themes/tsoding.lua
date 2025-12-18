@@ -1,6 +1,8 @@
 local cs = {
     "ring0-rootkit/ring0-dark.nvim",
-	lazy = false,
+	cs_alias = "tsoding",
+	lazy = true,
+	priority = 1000,
 };
 
 -- Re-used colours
