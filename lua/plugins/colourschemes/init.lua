@@ -1,5 +1,7 @@
 local THEMES_PATH = "plugins.colourschemes.themes."
 
+
+
 local function my_colours()
 	-- Highlight options are available at
 	-- :so $VIMRUNTIME/syntax/hitest.vim
@@ -50,6 +52,7 @@ local function get_all_cs_names()
 	return css_names
 end
 
+
 local function load_all_cs()
 	local cs_names = get_all_cs_names();
 	local load_css = {};
@@ -61,28 +64,46 @@ local function load_all_cs()
 	return load_css -- List of colourschemes
 end
 
+
+local function _module_contains_cs_name(M, name)
+	-- See if each module contains the target colourscheme name
+	local contains_name = false
+
+	-- Check git download path
+	-- Assumes name is at the first entry of the module
+	local git_path = M[1]
+	contains_name = (git_path:find(name) ~= nil) or contains_name
+
+	-- Check for a user defined alias
+	local alias = M["cs_alias"]
+	if M["cs_alias"] ~= nil then
+		contains_name = (alias:find(name) ~= nil) or contains_name
+	end
+
+	return contains_name
+end
+
+
 local function _choose_cs(name)
 	local css = load_all_cs()
 	local found = false
 
 	for i, M in ipairs(css) do
-		-- Assumes name is at the start
-		if M[1]:find(name) == nil then
-			--css[i].enabled = false
-			css[i].lazy = true
-		else
+		if _module_contains_cs_name(M, name) then
 			found = true
+			M.lazy = false
+		else
+			css[i].lazy = true
 		end
 	end
 	return {css, found}
 end
 
 
-
 local function choose_cs(name)
 	local cs_name = name or "catppuccin" -- Default backup theme
 
-	local all = _choose_cs(cs_name)
+	local all = _choose_cs(cs_name) -- Load all colour schemes into memory
 	local css = all[1]
 	local found = all[2]
 
@@ -92,11 +113,10 @@ local function choose_cs(name)
 
 	-- Use default (defined) colours
 	-- If colourscheme is not in the list of files
-	print("Invalid colourscheme: " .. cs_name)
+	print("(choose_cs)Invalid colourscheme: " .. cs_name)
 	my_colours()
 	return {}
 end
-
 
 
 local THEMES = get_all_cs_names(); -- Load once per nvim session
@@ -113,11 +133,12 @@ local function theme_complete(arglead, cmdline, cursorpos)
 	return matches                           -- MUST return a Lua list of strings
 end
 
+
 function ColourMe(name)
 	local status, M = pcall(require, THEMES_PATH .. name)
 
 	if not status then
-		print("Invalid colourscheme: " .. name)
+		print("(ColourMe)Invalid colourscheme: " .. name)
 		return
 	end
 
@@ -132,7 +153,6 @@ function ColourMe(name)
 end
 
 
-
 vim.api.nvim_create_user_command("ColourMe",
 	function (opts)
 		ColourMe(opts.args)
@@ -142,5 +162,5 @@ vim.api.nvim_create_user_command("ColourMe",
 
 
 -- E.g., "catppuccin", "vscode"
-local DEFAULT_THEME = "vscode"
+local DEFAULT_THEME = "tsoding"
 return choose_cs(DEFAULT_THEME)
