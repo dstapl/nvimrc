@@ -6,6 +6,7 @@ local MASON_PKGS = {
 	"zls",
 	"eslint",
 	"tinymist",
+	"clangd",
 }
 
 -- Update based on installed Mason packages
@@ -18,6 +19,7 @@ local FILETYPES = {
 		"js",
 		"typ",
 		"mc", -- Custom: Monkey C
+		"c", "h" -- c
 }
 
 return {
