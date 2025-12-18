@@ -142,4 +142,5 @@ vim.api.nvim_create_user_command("ColourMe",
 
 
 -- E.g., "catppuccin", "vscode"
-return choose_cs("vscode")
+local DEFAULT_THEME = "vscode"
+return choose_cs(DEFAULT_THEME)
