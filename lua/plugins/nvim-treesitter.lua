@@ -44,16 +44,18 @@ return {
 		ts.setup(opts)
 
 		-- Noop on already installed parsers
-		ts.install(opts.ensure_installed) -- Async operation
+		local ts_install = require("nvim-treesitter.install");
+		ts_install.ensure_installed(opts.ensure_installed) -- Async operation
 
-		-- Pretty print list of installed parsers
-		vim.api.nvim_create_user_command("TSInstallInfo", function ()
-			local parsers = ts.get_installed();
-
-			for _, parser_name in ipairs(parsers) do
-				print(parser_name .. "\n")
-			end
-		end, {nargs = 0});
+		-- NOTE: 2025-12-19 This get_installed functionality has been removed from the API
+		-- -- Pretty print list of installed parsers
+		-- vim.api.nvim_create_user_command("TSInstallInfo", function ()
+		-- 	local parsers = ts_install.get_installed();
+		--
+		-- 	for _, parser_name in ipairs(parsers) do
+		-- 		print(parser_name .. "\n")
+		-- 	end
+		-- end, {nargs = 0});
 	end,
 }
 
