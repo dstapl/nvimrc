@@ -46,7 +46,6 @@ return {
 		},
 		"saadparwaiz1/cmp_luasnip",
 		"j-hui/fidget.nvim",
-
 	},
 	opts = function()
 		local cmp = require('cmp')
@@ -96,7 +95,7 @@ return {
 							}
 						})
 						vim.g.zig_fmt_autosave = 0 -- Disable location list
-					end
+					end,
 				}
 			},
 			cmp = {
@@ -137,7 +136,7 @@ return {
 		-- Setup custom language servers
 		-- (Adapted from)
 		-- https://www.reddit.com/r/neovim/comments/12abfoh/comment/jzkoiih/
-		local lspconfig = require("lspconfig")
+		local lspconfig = require("lspconfig") -- WARNING(DEPRECATED) Use vim.lsp.config
 		local configs = require("lspconfig.configs")
 		if not configs.monkeyc_lsp then
 			configs.monkeyc_lsp = {
@@ -151,7 +150,6 @@ return {
 			}
 		end
 		lspconfig.monkeyc_lsp.setup{}
-
 
 		local cmp = require('cmp')
 
