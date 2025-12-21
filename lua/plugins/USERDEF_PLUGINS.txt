@@ -3,3 +3,4 @@ colourschemes
 status-animation
 weather
 strudel
+gen-compile-commands
