@@ -3,10 +3,11 @@
 
 local PLUGIN_DIR = vim.fn.stdpath("config") .. "/lua/plugins"
 local TMP_DIR = os.getenv("LOCALAPPDATA") .. "/temp"
+local name = "gen-compile-commands"
 local M = {
-	name = "gen-compile-commands",
+	name = name,
 	dir = PLUGIN_DIR,
-	main = PLUGIN_DIR .. "/gen-compile-commands.lua",
+	main = PLUGIN_DIR .. "/" .. name .. ".lua",
 	lazy = false,
 	opts = {
 		json_tmp_file = TMP_DIR .. "/compile_commandsNEOVIM.json.tmp",
