@@ -1,113 +1,114 @@
--- NOTE: If experiencing ABI errors when updating parsers:
---		TRY UPDATING THE **TREE-SITTER-CLI** first
-
--- Snippets from nvim-treesitter/lua/health.lua
-local function query_status(lang, query_group)
-	local tsq = vim.treesitter.query
-	local ok, err = pcall(tsq.get, lang, query_group)
-	if not ok then
-		return 'x', err
-	elseif not err then
-		return '.'
-	else
-		return '✓'
-	end
-end
-
--- Adapted from nvim-treesitter/lua/health.lua
--- Removed error collection
-local function get_installed_parsers()
-	local config = require("nvim-treesitter.config")
-	local parsers = require("nvim-treesitter.parsers")
-	local ts_health = require("nvim-treesitter.health")
-	local health = vim.health
-
-	-- Parser installation checks
-	local lang_status_string = 'Installed languages' .. string.rep(' ', 5) .. 'H L F I J\n'
-
-	local languages = config.get_installed()
-	table.sort(languages)
-
-	for _, lang in ipairs(languages) do
-		local parser = parsers[lang]
-		local out = lang .. string.rep(' ', 22 - #lang)
-
-		if parser and parser.install_info then
-			for _, query_group in pairs(ts_health.bundled_queries) do
-				local status, _ = query_status(lang, query_group)
-				out = out .. status .. ' '
-			end
-		end
-
-		lang_status_string = lang_status_string .. string.rep(' ', 2) .. vim.fn.trim(out, ' ', 2) .. "\n"
-	end
-
-	local legend = '  Legend: H[ighlights], L[ocals], F[olds], I[ndents], In[J]ections'
-	lang_status_string = lang_status_string .. "\n" .. legend
-
-	vim.notify(
-		lang_status_string,
-		vim.log.levels.INFO
-	)
-end
-
-
+local vim = vim
 
 local M = {
-	'nvim-treesitter/nvim-treesitter',
+	"neovim-treesitter/nvim-treesitter",
+	branch = "main",
 	lazy = false,
 	build = ":TSUpdate",
-	event =  { "BufReadPre", "BufNewFile" }, -- Only need TS inside buffers
-	ft = {
-		"lua", "rs", "sh", "tex", "bib", "json", "md", "zig", "zon",
-		"yaml", "yml", "ipynb", "js", "py", "typ", "c", "h",
-		"f", "f90", "F", "F90",
-	},
-
-	-- Restore functionality of previous version/s of nvim-treesitter
-	keys = {
-		"<CMD>TSInstallInfo",
-	},
+	event = { "BufReadPre", "BufNewFile" },
+	keys = { "<CMD>TSInstallInfo<CR>" },
 }
+
+local ensure_language_fts = {
+	vimdoc = {},
+	lua = {"lua"},
+	rust = {"rs"},
+	bash = {"sh"},
+	latex = {"bib"},
+	json = {"json"},
+	yaml = {"yaml", "yml"},
+	markdown = {"md"},
+	zig = {"zig", "zon"},
+	javascript = {"js"},
+	python = {"py"},
+	typst = {"typ"},
+	c = {"c", "h"},
+	fortran = {"f", "f90", "F", "F90"},
+}
+
+
+-- Flatten list for lazy loading
+local lazy_ft = {}
+local ft_set = {}
+
+for _, fts in pairs(ensure_language_fts) do
+	for _, ft in ipairs(fts) do
+		if not ft_set[ft] then
+			ft_set[ft] = true
+			table.insert(lazy_ft, ft)
+		end
+	end
+end
+M.ft = lazy_ft
+
+
 
 M.opts = {
-	ensure_installed = {
-		"vimdoc", "lua", "rust", "bash", "latex", "bibtex", "json",
-		"markdown", "zig", "yaml", "javascript", "python", "typst",
-		"c", "fortran",
-	},
 	sync_install = false,
-
-	-- Set to false if `tree-sitter` CLI is not intsalled locally
 	auto_install = true,
-	highlight = { -- Consistent syntax highlighting
-		enable = true,
-		disable = {},-- List of disabled *parsers*
-	},
-	incremental_selection = { -- Parser grammar node selection
-		enable = false,
-		disable = {},
-	},
-	indent = { -- Indentation when = is pressed
-		enable = true,
-		disable = {},
-	},
-
 }
 
+
+local function create_autocmd(ts_group, pattern_list)
+	vim.api.nvim_create_autocmd({"BufReadPost", "FileType"}, {
+		group = ts_group,
+		pattern = pattern_list,
+		callback = function(ev)
+			vim.defer_fn(function()
+				local bufnr = ev.buf
+				if vim.bo[bufnr].filetype == "" then
+					vim.cmd("filetype detect")
+				end
+				vim.treesitter.start(bufnr)
+				vim.bo[bufnr].indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
+
+			end, 0) -- Delay so nvim can load in to determine filetype
+		end
+	}
+)
+end
+
 M.config = function(_, opts)
-	local ts = require("nvim-treesitter");
+	local ts = require("nvim-treesitter")
+
+
+	-- Create autocmd to attach Treesitter to filetypes
+	local ts_group = vim.api.nvim_create_augroup("treesitter_attach", { clear = true })
+
+	local parsersInstalled = require("nvim-treesitter").get_installed("parsers")
+
+	for _, parser in pairs(parsersInstalled) do
+		local filetypes = vim.treesitter.language.get_filetypes(parser)
+
+		local pattern_list = {}
+		for i, ft in ipairs(filetypes) do
+			pattern_list[i] = "*." .. ft
+		end
+
+		create_autocmd(ts_group, pattern_list)
+	end
+
+	-- and for the custom file types
+	for _, fts in pairs(ensure_language_fts) do
+		if #fts > 0 then
+			local fts_pattern_list = {}
+			for i, ft in ipairs(lazy_ft) do
+				fts_pattern_list[i] = "*." .. ft
+			end
+			create_autocmd(ts_group, fts_pattern_list)
+		end
+	end
+
+
+
 	ts.setup(opts)
+	ts.install(vim.tbl_keys(ensure_language_fts))
 
-	-- Noop on already installed parsers
-	ts.install(opts.ensure_installed) -- Async operation
-
-	-- NOTE: 2026-12-19 get_installed is currently exposed in the API
-	-- nvim-treesitter commit 0ac55b8
-	-- Pretty print list of installed parsers
-	vim.api.nvim_create_user_command("TSInstallInfo", function ()
-		get_installed_parsers()
-	end, {nargs = 0});
+	-- User command to show installed parsers
+	vim.api.nvim_create_user_command("TSInstallInfo", function()
+		local parsers_installed = require("nvim-treesitter.parsers").get_installed()
+		vim.notify("Installed parsers: " .. table.concat(parsers_installed, ", "), vim.log.levels.INFO)
+	end, { nargs = 0 })
 end
 
 
