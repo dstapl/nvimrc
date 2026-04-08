@@ -139,7 +139,7 @@ M.config = function(_, opts)
 			"hardtime.nvim",
 
 			-- TODO: Fix checkhealth of magma
-			"jupyter",
+			"magma-nvim",
 		}
 
 		local disabled_specs = generate_disabled_spec_list(to_disable_display_names)
