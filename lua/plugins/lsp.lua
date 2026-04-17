@@ -1,3 +1,5 @@
+local vim = vim
+
 -- Define Mason packages
 local MASON_PKGS = {
 	"lua_ls",
@@ -12,8 +14,8 @@ local MASON_PKGS = {
 -- Update based on installed Mason packages
 local FILETYPES = {
 		"lua",
-		"rs",
-		"py",
+		"rust", "rs",
+		"python", "py",
 		"zig", "zir", --"zig.zon", -- For zig build system
 		"ipynb",
 		"js",
@@ -50,10 +52,7 @@ return {
 	opts = function()
 		local cmp = require('cmp')
 		local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
 		local cmp_lsp = require("cmp_nvim_lsp")
-
-		local lspconfig = require("lspconfig")
 
 		local capabilities = vim.tbl_deep_extend( -- Might change per system
 			"force",
@@ -62,48 +61,36 @@ return {
 			cmp_lsp.default_capabilities()
 		)
 
+
 		return {
-			["mason-lspconfig"] = {
-				ensure_installed = MASON_PKGS,
-				-- Extra customisation
-				handlers = {
-					function(server_name) -- Default handler 
-						lspconfig[server_name].setup {
-							capabilities = capabilities
-						}
-					end,
-					["lua_ls"] = function() -- Disable warnings undefined global vim
-						lspconfig.lua_ls.setup({
-							capabilities = capabilities,
-							settings = {
-								Lua = {
-									diagnostics = {
-										-- Ignore global variables from Vimscript
-										globals = { "vim", "it", "describe", "before_each", "after_each" },
-									}
-								}
-							},
-						})
-					end,
-					zls = function ()
-						lspconfig.zls.setup({
-							capabilities = capabilities,
-							settings = {
-								Lua = {
-									format_on_save = false, -- true
-								},
+			capabilities = capabilities,
+
+			servers = {
+				rust_analyzer = {},
+				pyright = {},
+				clangd = {},
+				tinymist = {},
+				lua_ls = {
+					settings = {
+						Lua = {
+							diagnostics = {
+								-- Ignore global variables from Vimscript
+								globals = { "vim", "it", "describe", "before_each", "after_each" },
 							}
-						})
-						vim.g.zig_fmt_autosave = 0 -- Disable location list
-					end,
-				}
+						}
+					}
+				},
+				zls = {
+					settings = {
+						format_on_save = false
+					}
+				},
+			},
+			mason = {
+				ensure_installed = MASON_PKGS
 			},
 			cmp = {
-				snippet = {
-					expand = function(args)
-						require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-					end,
-				},
+				snippet = { expand = function(args) require("luasnip").lsp_expand(args.body) end },
 				mapping = cmp.mapping.preset.insert({
 					-- Match with Telescope shortcuts
 					['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
@@ -115,45 +102,45 @@ return {
 				}),
 				sources = cmp.config.sources({
 					-- Same settings as VSCode
-					{ name = 'nvim_lsp', max_item_count = 12 },
-					{ name = 'luasnip', max_item_count = 4 },
+					{ name = "nvim_lsp", max_item_count = 12 },
+					{ name = "luasnip", max_item_count = 4 },
 				},
 				{
 					-- Only top 3 most recent buffers
-					{ name = 'buffer', max_item_count = 3 },
+					{ name = "buffer", max_item_count = 3 },
 				})
-
 			},
 		}
+
 	end,
 
 	config = function(_, opts)
 		require("fidget").setup()
 		require("mason").setup()
-		require("mason-lspconfig").setup(opts["mason-lspconfig"])
+		require("mason-lspconfig").setup(opts.mason)
+		require("cmp").setup(opts.cmp)
+
+		-- MIGRATING TO nvim-lspconfig 0.11
+        for server, server_opts in pairs(opts.servers) do
+            server_opts.capabilities = vim.tbl_deep_extend("force", opts.capabilities, server_opts.capabilities or {})
+
+			-- Replaces lspconfig.server.setup()
+            vim.lsp.enable(server, server_opts)
+        end
+
+		-- Special options from old config
+		-- Zig
+        vim.g.zig_fmt_autosave = 0
+
+		-- Custom language servers
+        vim.lsp.config["monkeyc_lsp"] = {
+            cmd = { "python", "C:/Coding/Garmin/monkeyc-lsp/lsp.py" },
+            filetypes = { "mc" },
+            root_dir = vim.fs.root(0, { ".git", "monkey.jungle", "manifest.xml" }),
+        }
+        vim.lsp.enable("monkeyc_lsp")
 
 
-		-- Setup custom language servers
-		-- (Adapted from)
-		-- https://www.reddit.com/r/neovim/comments/12abfoh/comment/jzkoiih/
-		local lspconfig = require("lspconfig") -- WARNING(DEPRECATED) Use vim.lsp.config
-		local configs = require("lspconfig.configs")
-		if not configs.monkeyc_lsp then
-			configs.monkeyc_lsp = {
-				default_config = {
-					-- TODO: Switch to `python3`?  
-					cmd = { 'python', 'C:/Coding/Garmin/monkeyc-lsp/lsp.py' },
-					root_dir = lspconfig.util.root_pattern('.git', ''),
-					filetypes = { "mc" },
-					settings = {} -- TODO: What goes here?
-				},
-			}
-		end
-		lspconfig.monkeyc_lsp.setup{}
-
-		local cmp = require('cmp')
-
-		cmp.setup(opts.cmp)
 		-- ALREADY ASSIGNED TO `K` by nvim-lspconfig
 		-- vim.keymap.set("n",
 		-- '<Leader>sd',
