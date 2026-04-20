@@ -1,3 +1,4 @@
+local vim = vim
 local MAINFILE = "plugins.strudel.lua.strudel"
 local PREFIX = "Strudel"
 local command_names = {

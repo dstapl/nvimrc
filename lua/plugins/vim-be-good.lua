@@ -1,5 +1,5 @@
 return {
-	'ThePrimeagen/vim-be-good',
+	"ThePrimeagen/vim-be-good",
 	cmd = "VimBeGood",
 	lazy = true,
 }

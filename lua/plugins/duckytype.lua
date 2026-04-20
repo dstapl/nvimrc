@@ -1,3 +1,4 @@
+local vim = vim
 return {
 	"kwakzalver/duckytype.nvim",
 	keys = "<Leader>tt",

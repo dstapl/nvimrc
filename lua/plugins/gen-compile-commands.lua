@@ -1,3 +1,4 @@
+local vim = vim
 --- Inspired by `leosmaia21/gcompilecommands.nvim`
 --- Adapted for Windows
 

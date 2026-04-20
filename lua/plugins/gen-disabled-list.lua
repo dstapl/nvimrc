@@ -1,3 +1,4 @@
+local vim = vim
 --- Copied from gen-compile-commands.lua
 local PLUGIN_DIR = vim.fn.stdpath("config") .. "/lua/plugins"
 local name = "gen-disabled-list"

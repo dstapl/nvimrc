@@ -1,3 +1,4 @@
+local vim = vim
 -- Weather plugin using https://github.com/chubin/wttr.in
 -- Requires cURL to function (See weather_request)
 local PLUGIN_NAME = "weather"

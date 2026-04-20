@@ -1,3 +1,5 @@
+local vim = vim
+
 -- https://stackoverflow.com/questions/5375240/a-more-useful-statusline-in-vim
 -- and https://nuxsh.is-a.dev/blog/custom-nvim-statusline.html#org38ea4da
 -- https://www.reddit.com/r/neovim/comments/s9wyh8/custom_neovim_statusline_in_lua/

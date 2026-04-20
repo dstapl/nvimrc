@@ -1,3 +1,4 @@
+local vim = vim
 local cs = {
     "ring0-rootkit/ring0-dark.nvim",
 	cs_alias = "tsoding",

@@ -1,3 +1,4 @@
+local vim = vim
 local PLUGIN_NAME = "start-screen"
 local imDir = vim.fn.stdpath("data") .. "/" .. PLUGIN_NAME
 

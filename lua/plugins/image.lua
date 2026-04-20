@@ -1,9 +1,9 @@
 return {
-	'samodostal/image.nvim',
+	"samodostal/image.nvim",
 	--lazy = false,
 	--priority = 1000,
 	dependencies = {
-		'nvim-lua/plenary.nvim',
+		"nvim-lua/plenary.nvim",
 	},
 	lazy = true,
 }

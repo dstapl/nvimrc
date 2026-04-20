@@ -1,3 +1,5 @@
+local vim = vim
+
 -- Avoid side-effects when nocompatible has already been set.
 if vim.opt.compatible:get() then
     vim.opt.compatible = false

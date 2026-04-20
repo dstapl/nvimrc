@@ -1,3 +1,4 @@
+local vim = vim
 local M = {}
 
 -- {channel_id = <id>, buf = <buf_no>, win = <nil or win>}

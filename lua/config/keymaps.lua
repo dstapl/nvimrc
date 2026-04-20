@@ -1,3 +1,5 @@
+local vim = vim
+
 -- Set <Leader>
 vim.g.mapleader = " "
 
@@ -141,3 +143,14 @@ vim.keymap.set("n", "<ESC><ESC>", "<CMD>bd<CR>")
 
 -- Open system file-explorer at current buffer directory
 vim.keymap.set("n", "<Leader>ex", "<CMD>!start explorer %:h<CR><CR>")
+
+
+-- Clear current registers (Adapted from https://stackoverflow.com/a/39348498)
+local function clear_registers()
+  local regs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-=\"*+:%#"
+  for i = 1, #regs do
+    local reg = regs:sub(i, i)
+    vim.fn.setreg(reg, "")
+  end
+end
+vim.api.nvim_create_user_command("ClearRegisters", clear_registers, {})

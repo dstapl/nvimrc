@@ -1,6 +1,7 @@
+local vim = vim
 return {
-	'nvim-telescope/telescope.nvim', tag = '0.1.6',
-	dependencies = { 'nvim-lua/plenary.nvim' },
+	"nvim-telescope/telescope.nvim", tag = "0.1.6",
+	dependencies = { "nvim-lua/plenary.nvim" },
 	keys = {"<Leader>ff", "<Leader>fg"},
 	opts = {
 --		find_files = {
@@ -23,18 +24,18 @@ return {
 --					-- powershell Get-Content README.md -Head 4
 --					-- This is so inefficient...
 --					local cmd ={"head", "-c", max_bytes, filepath}
---					require('telescope.previewers.utils').job_maker(cmd, bufnr, opts)
+--					require("telescope.previewers.utils").job_maker(cmd, bufnr, opts)
 --				end
 --			},
 --		}
 	},
 	config = function (_, opts)
 --  	local actions = require("telescope.actions")
-		require('telescope').setup(opts)
+		require("telescope").setup(opts)
 
-		local builtin = require('telescope.builtin')
---		vim.keymap.set('n', '<leader>ff', function () builtin.find_files({hidden = true, no_ignore = true}) end)
-		vim.keymap.set('n', '<leader>ff', function () builtin.find_files({no_ignore = true}) end)
-		vim.keymap.set('n', '<leader>fg', function () builtin.live_grep({no_ignore = true}) end)
+		local builtin = require("telescope.builtin")
+--		vim.keymap.set("n", "<leader>ff", function () builtin.find_files({hidden = true, no_ignore = true}) end)
+		vim.keymap.set("n", "<leader>ff", function () builtin.find_files({no_ignore = true}) end)
+		vim.keymap.set("n", "<leader>fg", function () builtin.live_grep({no_ignore = true}) end)
 	end
 }

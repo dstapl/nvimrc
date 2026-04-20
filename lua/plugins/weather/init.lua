@@ -1,3 +1,4 @@
+local vim = vim
 local MAINFILE = "plugins.weather.weather"
 local PREFIX = "Weather"
 local command_names = {

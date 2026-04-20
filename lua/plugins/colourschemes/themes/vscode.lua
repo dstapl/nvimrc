@@ -1,3 +1,4 @@
+local vim = vim
 return {
 	"Mofiqul/vscode.nvim",
 	lazy = false,

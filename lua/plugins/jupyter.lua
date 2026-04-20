@@ -1,9 +1,10 @@
+local vim = vim
 return {
 	"dccsillag/magma-nvim",
 	-- build = ":UpdateRemotePlugins",
 	build = function (LazyPlugin)
 		-- Try to install required python modules
-		req_modules = {
+		local req_modules = {
 			"pynvim", -- remote plugin api
 			"jupyter_client", -- interacting with jupyter
 			"ueberzug", "Pillow", -- displaying images
@@ -15,11 +16,15 @@ return {
 
 		for _, module_name in ipairs(req_modules) do
 			local handle = io.popen("python -m pip install " .. module_name)
+			if handle == nil then
+				print("Error: Could not pip install " .. module_name)
+			end
+
 			local result = handle:read("a") -- read all?
 			handle:close()
 			print(module_name .. " install message: " .. result)
 		end
-		
+
 		vim.cmd(":UpdateRemotePlugins")
 	end,
 	ft = { "ipynb" },

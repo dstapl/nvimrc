@@ -1,3 +1,5 @@
+local vim = vim
+
 local THEMES_PATH = "plugins.colourschemes.themes."
 
 

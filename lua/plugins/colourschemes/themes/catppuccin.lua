@@ -1,3 +1,4 @@
+local vim = vim
 local cs = {
 	"catppuccin/nvim",
 	name = "catppuccin",

@@ -1,5 +1,6 @@
+local vim = vim
 return {
-	'uga-rosa/ccc.nvim',
+	"uga-rosa/ccc.nvim",
 	-- TODO: Make sure these are up-to-date
 	keys = {"<Leader>cp", "<Leader>ch"},
 	opts = {

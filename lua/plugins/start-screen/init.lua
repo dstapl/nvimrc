@@ -1,3 +1,4 @@
+local vim = vim
 return {
 	dir = vim.fn.stdpath("config") .. "/lua/plugins/start-screen",
 	main  = "plugins.start-screen.start-screen",

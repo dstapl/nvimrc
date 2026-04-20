@@ -1,3 +1,4 @@
+local vim = vim
 return {
 	"ThePrimeagen/harpoon",
 	branch = "harpoon2",
