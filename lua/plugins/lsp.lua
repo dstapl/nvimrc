@@ -9,6 +9,7 @@ local MASON_PKGS = {
 	"eslint",
 	"tinymist",
 	"clangd",
+	"fortls"
 }
 
 -- Update based on installed Mason packages
@@ -21,7 +22,8 @@ local FILETYPES = {
 		"js",
 		"typ",
 		"mc", -- Custom: Monkey C
-		"c", "h" -- c
+		"c", "h", -- c
+		"fortran",
 }
 
 return {
@@ -65,8 +67,19 @@ return {
 		return {
 			capabilities = capabilities,
 
+			-- TODO	Generate default from MASON_PKGS
+			--	Only make modifications from default here
 			servers = {
-				rust_analyzer = {},
+				rust_analyzer = {
+					settings = {
+						["rust-analyzer"] = {
+							checkOnSave = true,
+							check = {
+								command = "clippy",
+							},
+						}
+					}
+				},
 				pyright = {},
 				clangd = {},
 				tinymist = {},
@@ -85,6 +98,21 @@ return {
 						format_on_save = false
 					}
 				},
+				-- Adapted from https://github.com/fortran-lang/fortls/issues/426
+				fortls = {
+					cmd = { "fortls" },
+					filetypes = { "fortran" },
+					-- root_dir = require("lspconfig").util.root_pattern("Makefile", ".git"),
+					settings = {
+						fortls = {
+							lowercase_intrinsics = true,
+							hover_signature = true,
+							hover_language = "fortran",
+							use_signature_help = true,
+						}
+					}
+				}
+
 			},
 			mason = {
 				ensure_installed = MASON_PKGS
