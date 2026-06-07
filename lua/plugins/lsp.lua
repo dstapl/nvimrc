@@ -148,12 +148,27 @@ return {
 		require("mason-lspconfig").setup(opts.mason)
 		require("cmp").setup(opts.cmp)
 
+
+		vim.api.nvim_create_autocmd("LspAttach", {
+			callback = function(event)
+				local attach_opts = { buffer = event.buf, silent = true }
+
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, attach_opts)
+				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, attach_opts)
+
+				vim.keymap.set("n", "gR", vim.lsp.buf.references, attach_opts)
+				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, attach_opts)
+			end,
+		})
+
+
 		-- MIGRATING TO nvim-lspconfig 0.11
-        for server, server_opts in pairs(opts.servers) do
+		for server, server_opts in pairs(opts.servers) do
             server_opts.capabilities = vim.tbl_deep_extend("force", opts.capabilities, server_opts.capabilities or {})
 
 			-- Replaces lspconfig.server.setup()
-            vim.lsp.enable(server, server_opts)
+			vim.lsp.config(server, server_opts)
+            vim.lsp.enable(server)
         end
 
 		-- Special options from old config
@@ -161,11 +176,11 @@ return {
         vim.g.zig_fmt_autosave = 0
 
 		-- Custom language servers
-        vim.lsp.config["monkeyc_lsp"] = {
+        vim.lsp.config("monkeyc_lsp", {
             cmd = { "python", "C:/Coding/Garmin/monkeyc-lsp/lsp.py" },
             filetypes = { "mc" },
             root_dir = vim.fs.root(0, { ".git", "monkey.jungle", "manifest.xml" }),
-        }
+        })
         vim.lsp.enable("monkeyc_lsp")
 
 
