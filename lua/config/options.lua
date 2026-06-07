@@ -64,6 +64,13 @@ vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
     end,
 })
 
+-- Open quickfix list on population (basic commands)
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  pattern = { "make", "grep", "vimgrep" },
+  callback = function()
+    vim.cmd("copen")
+  end,
+})
 
 -- Set overrides for specific files
 local wrap_files = {
