@@ -1,7 +1,7 @@
 local vim = vim
 return {
 	dir = vim.fn.stdpath("config") .. "/lua/plugins/start-screen",
-	main  = "plugins.start-screen.start-screen",
+	main = "plugins.start-screen.start-screen",
 	--event = "VeryLazy",
 	lazy = false,
 	opts  = require("plugins.start-screen.opts"),
