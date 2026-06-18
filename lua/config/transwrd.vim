@@ -18,6 +18,13 @@
 "     When set, s:wordpattern (default '\k\+') will be set to it. This only
 "     take effect the first time the script is loaded.
 
+
+" Local edit: dstapl <22639959+dstapl@users.noreply.github.com>
+" TODO: Change so cursor is reset to where the command was executed instead of
+" being after the second word that's swapped (likely due to how vim motions
+" work)
+
+
 if exists("g:loaded_transwrd")
     finish
 endif
