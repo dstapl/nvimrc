@@ -38,6 +38,8 @@ vim.opt.signcolumn = "yes" -- Display things like breakpoints & icons
 vim.opt.updatetime = 1000 -- Unstable at lower values than ~1000
 -- Don't colour characters past column limit (Soft char limit)
 vim.opt.colorcolumn = "80"
+-- Floating window border
+vim.opt.winborder = "rounded"
 
 
 vim.opt.visualbell = false
