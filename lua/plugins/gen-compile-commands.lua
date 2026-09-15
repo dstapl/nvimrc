@@ -1,184 +1,127 @@
 local vim = vim
 --- Inspired by `leosmaia21/gcompilecommands.nvim`
---- Adapted for Windows
+--- Adapted for Windows / Cross-platform
 
 local PLUGIN_DIR = vim.fn.stdpath("config") .. "/lua/plugins"
 
-local name	= "gen-compile-commands"
-local M		= {
-	name	= name,
-	dir		= PLUGIN_DIR,
-	main	= PLUGIN_DIR .. "/" .. name .. ".lua",
-	lazy	= false,
-	opts	= {
-		json_tmp_file = os.tmpname(),
+local name = "gen-compile-commands"
+local M = {
+	name = name,
+	dir = PLUGIN_DIR,
+	main = PLUGIN_DIR .. "/" .. name .. ".lua",
+	lazy = false,
+	opts = {
+		json_tmp_file = vim.fn.tempname(),
 	}
 }
-local NEWLINE = "\n"
 
-
-local function json_escape_string(str)
-	-- Escape string quotes " -> \"
-	return str:gsub('"', '\\"')
+local function encode_path_str(filepath)
+	-- clangd accepts forward slashes on Windows as well as Unix.
+	return filepath:gsub("\\", "/")
 end
 
+-- Safely formats compile_commands array into indented JSON using Neovim's built-in encoder.
+local function format_pretty_compile_commands(commands)
+	local lines = { "[" }
 
-local function json_encode_with_sep(tbl, sep, indent_level)
-	if type(tbl) ~= "table" then
-		error("Input is not a table")
+	for i, item in ipairs(commands) do
+		table.insert(lines, "  {")
+		table.insert(
+			lines,
+			'    "directory": ' .. vim.json.encode(item.directory) .. ","
+		)
+		table.insert(
+			lines,
+			'    "command": ' .. vim.json.encode(item.command) .. ","
+		)
+		table.insert(
+			lines,
+			'    "file": ' .. vim.json.encode(item.file)
+		)
+		table.insert(
+			lines,
+			"  }" .. (i < #commands and "," or "")
+		)
 	end
 
-	local function _encode_json_value(val)
-		if type(val) == "table" then -- Nested tables
-			return json_encode_with_sep(val)
-		elseif type(val) == "string" then
-			return '"' ..json_escape_string(val) .. '"'
-		elseif type(val) == "number" then
-			return tostring(val)
-		elseif type(val) == "boolean" then
-			return val and "true" or "false"
-		else -- Type not supported or nil
-			return "null"
-		end
-	end
+	table.insert(lines, "]")
 
-	-- Encode json
-	local indent = "\t"
-	local outer_spacer = string.rep(indent, indent_level)
-	local inner_spacer = outer_spacer .. indent
-
-	local json = outer_spacer .. "{" .. sep
-	local first = true
-
-	for key, value in pairs(tbl) do
-		-- Prepend commas for subsequent pairs
-		if not first then
-			json = json .. "," .. sep
-		end
-
-		-- Encode lua key into json
-		local key_str = ""
-		if type(key) == "string" then
-			key_str = '"' ..json_escape_string(key) .. '"'
-		else
-			key_str = tostring(key)
-		end
-
-		-- Add to output
-		json = json .. inner_spacer .. key_str .. ": " .. _encode_json_value(value)
-
-
-		first = false
-	end
-
-	-- End the JSON object
-	json = json .. sep .. outer_spacer .. "}"
-
-	return json
+	return table.concat(lines, "\n")
 end
 
-
-local function write_json_compile_commands_indented(file, current_dir, json_contents_str, indent_level)
-	file:write("[" .. NEWLINE)
-
-	-- Implement no trailing comma in JSON lists
-
-	local matches = {}
-	-- Collect all matches in the table
-	for match in json_contents_str:gmatch("[^\r\n]+") do
-		table.insert(matches, match)
-	end
-
-	-- Track which build option we're on
-	local build_no = 1
-	for _, build in ipairs(matches) do
-		-- Construct json object and string
-		local filename = build:match("[^%s]+$")
-		local command = build:sub(1, #build - #filename)
-		local command_table = {["directory"] = current_dir, ["command"] = command, ["file"] = filename};
-		local json = json_encode_with_sep(command_table, NEWLINE, indent_level)
-
-		-- Append comma unless last element
-		if build_no < #matches then
-			json = json .. "," .. NEWLINE
-		end
-		file:write(json)
-
-		build_no = build_no + 1
-	end
-
-	file:write(NEWLINE .. "]")
-
-	file:flush()
-end
-
-
--- TODO: Does this need to be changed per os? vim.loop.os_uname().sysname
-local function generateCompileCommands(opts, indent_level)
-	if (indent_level == nil) or (type(indent_level) ~= "number") then
-		indent_level = 0 -- None
-	end
-
-	-- NOTE: Run "make clean" or similar before this.
-	-- Simulates running "make" and greps all compile commands
-	local cmd = "make -wn 2>&1 | grep -E \"gcc|clang|clang\\+\\+|g\\+\\+.*\" > " .. opts.json_tmp_file
-	vim.cmd("silent! !" .. cmd)
-	if vim.v.shell_error ~= 0 then
-		print("(vim.v.shell_error)Make failed, error: " .. vim.v.shell_error)
+local function generateCompileCommands(opts)
+	if not opts or not opts.json_tmp_file then
+		print("Error: opts.json_tmp_file is required")
 		return 1
 	end
 
-	local current_dir	= vim.fn.getcwd()
-	local os_name		= vim.loop.os_uname().sysname
-	if os_name:find("Windows") then
-		current_dir = string.gsub(current_dir, '\\', '/')
+	local tmp_file = vim.fn.expand(opts.json_tmp_file)
+
+	-- Simulates running "make" and greps all compile commands
+	local cmd = 'make -wn 2>&1 | grep -E "gcc|clang|clang\\+\\+|g\\+\\+.*" > "' .. tmp_file .. '"'
+	vim.cmd("silent! !" .. cmd)
+	if vim.v.shell_error ~= 0 then
+		print("Make failed, error: " .. vim.v.shell_error)
+		return 1
+	end
+
+	local file = io.open(tmp_file, "r")
+	if not file then
+		print("Cannot open file (read): " .. tmp_file)
+		return 1
+	end
+
+	local json_contents_str = file:read("*a")
+	file:close()
+
+	-- Get current directory and handle Windows paths properly
+	local current_dir = encode_path_str(vim.fn.getcwd())
+	local compile_commands = {}
+
+	for line in json_contents_str:gmatch("[^\r\n]+") do
+		local filename = line:match("[^%s]+$")
+
+		if filename then
+			local command = line:sub(1, #line - #filename)
+
+			table.insert(compile_commands, {
+				directory = current_dir,
+				command = command,
+				file = filename,
+			})
+		end
 	end
 
 	local write_path = current_dir .. "/compile_commands.json"
 
-	-- IO Handlers
-	local f = io.open(opts.json_tmp_file, "r")
-	if f == nil then
-		print("Cannot open file(read)" .. opts.json_tmp_file)
-		return nil
-	end
-	local json_contents_str = f:read("*a")
-
-	-- Format path
-	local file = io.open(write_path, "w")
-	if file == nil then
-		print("Cannot open file(write)" .. write_path)
-		return nil
+	file = io.open(write_path, "w")
+	if not file then
+		print("Cannot open file (write): " .. write_path)
+		return 1
 	end
 
-	-- Write out JSON
-	write_json_compile_commands_indented(file, current_dir, json_contents_str, indent_level)
-
-	-- Close files
+	file:write(format_pretty_compile_commands(compile_commands))
 	file:close()
-	f:close()
+
 	vim.cmd("silent! LspRestart")
 	print("compile_commands.json generated, LSP restarted")
 
 	-- Cleanup temporary files
-	print("Cleaning up: " .. opts.json_tmp_file)
-	local suc, errmsg, errcode = os.remove(opts.json_tmp_file)
-	if suc ~= true then
-		print("Failed to remove json_tmp_file: " .. opts.json_tmp_file)
-		print("("..errcode..") " .. errmsg)
-		return errcode
+	local success, errmsg, errcode = os.remove(tmp_file)
+	if not success then
+		print("Failed to remove temporary file: " .. tmp_file)
+		print("(" .. tostring(errcode) .. ") " .. tostring(errmsg))
+		return errcode or 1
 	end
 
 	return 0
 end
 
-
 M.setup = function(opts)
-	if opts.json_tmp_file_~= nil then
+	if opts and opts.json_tmp_file ~= nil then
 		opts.json_tmp_file = vim.fn.expand(opts.json_tmp_file)
 	end
 end
-
 
 M.config = function(_, opts)
 	M.setup(opts)
@@ -186,6 +129,5 @@ M.config = function(_, opts)
 		generateCompileCommands(opts)
 	end, {})
 end
-
 
 return M

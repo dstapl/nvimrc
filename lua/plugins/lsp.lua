@@ -96,8 +96,12 @@ return {
 					}
 				},
 				zls = {
+					flags = {
+						debounce_text_changes = 5000, -- in ms
+					},
 					settings = {
-						format_on_save = false
+						format_on_save = false,
+						enable_build_on_save = false
 					}
 				},
 				-- Adapted from https://github.com/fortran-lang/fortls/issues/426
@@ -216,5 +220,10 @@ return {
 				prefix = "",
 			},
 		})
+
+
+		vim.keymap.set("n", "<leader>dq", function()
+			vim.diagnostic.setqflist({ open = true })
+		end, { desc = "Diagnostics -> Quickfix" })
 	end
 }

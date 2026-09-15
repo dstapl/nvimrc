@@ -68,6 +68,22 @@ vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
     end,
 })
 
+
+
+
+-- Make C/C++ resolve goto files with the include/external folders
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "c", "cpp" },
+  callback = function()
+    vim.opt_local.path:append({ "include", "external", "src" })
+    vim.opt_local.suffixesadd:append({ ".hpp", ".h", ".cpp" })
+  end,
+})
+
+
+
+
+
 -- Open quickfix list on population (basic commands)
 vim.api.nvim_create_autocmd("QuickFixCmdPost", {
   pattern = { "make", "grep", "vimgrep" },
