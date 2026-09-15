@@ -9,21 +9,23 @@ local MASON_PKGS = {
 	"eslint",
 	"tinymist",
 	"clangd",
-	"fortls"
+	"fortls",
+	"texlab"
 }
 
 -- Update based on installed Mason packages
 local FILETYPES = {
-		"lua",
-		"rust", "rs",
-		"python", "py",
-		"zig", "zir", --"zig.zon", -- For zig build system
-		"ipynb",
-		"js",
-		"typ",
-		"mc", -- Custom: Monkey C
-		"c", "h", -- c
-		"fortran",
+	"lua",
+	"rust", "rs",
+	"python", "py",
+	"zig", "zir", --"zig.zon", -- For zig build system
+	"ipynb",
+	"js",
+	"typ",
+	"mc", -- Custom: Monkey C
+	"c", "h", -- c
+	"fortran",
+	"bib", "tex", "sty",  -- latex
 }
 
 return {
@@ -111,13 +113,31 @@ return {
 							use_signature_help = true,
 						}
 					}
-				}
-
+				},
+				texlab = {},
 			},
 			mason = {
 				ensure_installed = MASON_PKGS
 			},
 			cmp = {
+				experimental = {
+					ghost_text = true,
+				},
+				view = {
+					entries = {
+						-- Renders menu at bottom overlayed on cmdline area
+						name = 'wildmenu',
+						separator = ' | '
+					},
+				},
+				performance = {
+					-- Minimal menu with 1 entry
+					max_view_entries = 3,
+				},
+				-- selection = {
+				-- 	preselect = cmp.PreselectMode.Item,
+				-- },
+
 				snippet = { expand = function(args) require("luasnip").lsp_expand(args.body) end },
 				mapping = cmp.mapping.preset.insert({
 					-- Match with Telescope shortcuts
@@ -127,6 +147,7 @@ return {
 					['<C-y>'] = cmp.mapping.confirm({ select = true }),
 					-- Unsure of use 
 					-- ["<C-Y>"] = cmp.mapping.complete(),
+					--
 				}),
 				sources = cmp.config.sources({
 					-- Same settings as VSCode
@@ -147,7 +168,6 @@ return {
 		require("mason").setup()
 		require("mason-lspconfig").setup(opts.mason)
 		require("cmp").setup(opts.cmp)
-
 
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(event)
@@ -183,19 +203,6 @@ return {
         })
         vim.lsp.enable("monkeyc_lsp")
 
-
-		-- ALREADY ASSIGNED TO `K` by nvim-lspconfig
-		-- vim.keymap.set("n",
-		-- '<Leader>sd',
-		-- --function()
-		-- --	if cmp.visible_docs() then
-		-- --		cmp.close_docs()
-		-- --	else
-		-- --		cmp.open_docs()
-		-- --	end
-		-- --end
-		-- vim.lsp.buf.hover
-		-- )
 		vim.keymap.set("n", "<Leader>sd", vim.diagnostic.open_float)
 
 

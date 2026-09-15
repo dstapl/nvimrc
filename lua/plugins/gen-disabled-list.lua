@@ -8,6 +8,19 @@ local M = {
 	dir = PLUGIN_DIR,
 	main = PLUGIN_DIR .. "/" .. filename,
 	lazy = false,
+	opts = {
+		to_disable_display_names = {
+			-- Other plugins
+			--presence,
+			"vim-fugitive",
+			--baleia,
+			"garbage-day.nvim",
+			"hardtime.nvim",
+
+			-- TODO: Fix checkhealth of magma
+			"magma-nvim",
+		}
+	}
 }
 
 
@@ -131,19 +144,7 @@ M.config = function(_, opts)
 	function ()
 		local path = vim.fn.stdpath("config") .. "/lua/config/disabled.lua"
 
-		local to_disable_display_names = {
-			-- Other plugins
-			--presence,
-			"vim-fugitive",
-			--baleia,
-			"garbage-day.nvim",
-			"hardtime.nvim",
-
-			-- TODO: Fix checkhealth of magma
-			"magma-nvim",
-		}
-
-		local disabled_specs = generate_disabled_spec_list(to_disable_display_names)
+		local disabled_specs = generate_disabled_spec_list(opts.to_disable_display_names)
 
 		write_disable_file(path, disabled_specs)
 	end,

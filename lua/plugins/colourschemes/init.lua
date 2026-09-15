@@ -125,14 +125,14 @@ local THEMES = get_all_cs_names(); -- Load once per nvim session
 -- Create auto-completion list from `/Themes` folder
 local function theme_complete(arglead, cmdline, cursorpos)
 	local matches = {}
-	for _, theme_name in ipairs(THEMES) do           -- iterate over the keys
+	for _, theme_name in ipairs(THEMES) do -- iterate over the keys
 		-- vim.pesc(...) == vim.fn.escape(arglead, '\\.^$')
 		if theme_name:find('^' .. vim.pesc(arglead)) then
 			table.insert(matches, theme_name)
 		end
 	end
 	table.sort(matches)
-	return matches                           -- MUST return a Lua list of strings
+	return matches -- MUST return a Lua list of strings
 end
 
 
@@ -164,5 +164,6 @@ vim.api.nvim_create_user_command("ColourMe",
 
 
 -- E.g., "catppuccin", "vscode"
-local DEFAULT_THEME = "tsoding"
+-- local DEFAULT_THEME = "tsoding"
+local DEFAULT_THEME = "gruvbox"
 return choose_cs(DEFAULT_THEME)

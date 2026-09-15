@@ -3,16 +3,15 @@ local vim = vim
 --- Adapted for Windows
 
 local PLUGIN_DIR = vim.fn.stdpath("config") .. "/lua/plugins"
-local TMP_DIR = os.getenv("LOCALAPPDATA") .. "/temp"
-local name = "gen-compile-commands"
-local M = {
-	name = name,
-	dir = PLUGIN_DIR,
-	main = PLUGIN_DIR .. "/" .. name .. ".lua",
-	lazy = false,
-	opts = {
-		json_tmp_file = TMP_DIR .. "/compile_commandsNEOVIM.json.tmp",
-		clangd_tmp_file = TMP_DIR .. "/.clang.json.tmp"
+
+local name	= "gen-compile-commands"
+local M		= {
+	name	= name,
+	dir		= PLUGIN_DIR,
+	main	= PLUGIN_DIR .. "/" .. name .. ".lua",
+	lazy	= false,
+	opts	= {
+		json_tmp_file = os.tmpname(),
 	}
 }
 local NEWLINE = "\n"
@@ -22,6 +21,7 @@ local function json_escape_string(str)
 	-- Escape string quotes " -> \"
 	return str:gsub('"', '\\"')
 end
+
 
 local function json_encode_with_sep(tbl, sep, indent_level)
 	if type(tbl) ~= "table" then
@@ -78,12 +78,6 @@ local function json_encode_with_sep(tbl, sep, indent_level)
 end
 
 
-local function encode_path_str(filepath)
-	return string.gsub(filepath, '\\', '/')
-end
-
-
-
 local function write_json_compile_commands_indented(file, current_dir, json_contents_str, indent_level)
 	file:write("[" .. NEWLINE)
 
@@ -120,27 +114,32 @@ end
 
 
 -- TODO: Does this need to be changed per os? vim.loop.os_uname().sysname
-local function generateCompileCommands(indent_level)
+local function generateCompileCommands(opts, indent_level)
 	if (indent_level == nil) or (type(indent_level) ~= "number") then
 		indent_level = 0 -- None
 	end
 
 	-- NOTE: Run "make clean" or similar before this.
 	-- Simulates running "make" and greps all compile commands
-	local cmd = "make -wn 2>&1 | egrep \"gcc|clang|clang\\+\\+|g\\+\\+.*\" > " .. M.opts.json_tmp_file
+	local cmd = "make -wn 2>&1 | grep -E \"gcc|clang|clang\\+\\+|g\\+\\+.*\" > " .. opts.json_tmp_file
 	vim.cmd("silent! !" .. cmd)
 	if vim.v.shell_error ~= 0 then
 		print("(vim.v.shell_error)Make failed, error: " .. vim.v.shell_error)
 		return 1
 	end
 
-	local current_dir = encode_path_str(vim.fn.getcwd())
+	local current_dir	= vim.fn.getcwd()
+	local os_name		= vim.loop.os_uname().sysname
+	if os_name:find("Windows") then
+		current_dir = string.gsub(current_dir, '\\', '/')
+	end
+
 	local write_path = current_dir .. "/compile_commands.json"
 
 	-- IO Handlers
-	local f = io.open(M.opts.json_tmp_file, "r")
+	local f = io.open(opts.json_tmp_file, "r")
 	if f == nil then
-		print("Cannot open file(read)" .. M.opts.json_tmp_file)
+		print("Cannot open file(read)" .. opts.json_tmp_file)
 		return nil
 	end
 	local json_contents_str = f:read("*a")
@@ -149,11 +148,6 @@ local function generateCompileCommands(indent_level)
 	local file = io.open(write_path, "w")
 	if file == nil then
 		print("Cannot open file(write)" .. write_path)
-		return nil
-	end
-
-	if file == nil then
-		error("File I/O failed")
 		return nil
 	end
 
@@ -166,20 +160,30 @@ local function generateCompileCommands(indent_level)
 	vim.cmd("silent! LspRestart")
 	print("compile_commands.json generated, LSP restarted")
 
+	-- Cleanup temporary files
+	print("Cleaning up: " .. opts.json_tmp_file)
+	local suc, errmsg, errcode = os.remove(opts.json_tmp_file)
+	if suc ~= true then
+		print("Failed to remove json_tmp_file: " .. opts.json_tmp_file)
+		print("("..errcode..") " .. errmsg)
+		return errcode
+	end
+
 	return 0
 end
 
 
 M.setup = function(opts)
-	if opts.json_tmp_file_path ~= nil then
-		M.opts.json_tmp_file = vim.fn.expand(opts.json_tmp_file_path)
+	if opts.json_tmp_file_~= nil then
+		opts.json_tmp_file = vim.fn.expand(opts.json_tmp_file)
 	end
 end
+
 
 M.config = function(_, opts)
 	M.setup(opts)
 	vim.api.nvim_create_user_command("Gcompilecommands", function()
-		generateCompileCommands()
+		generateCompileCommands(opts)
 	end, {})
 end
 

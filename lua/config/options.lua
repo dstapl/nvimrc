@@ -58,6 +58,8 @@ vim.filetype.add{{
 		mc = "mc",
 	}
 }}
+vim.g.tex_flavor = "latex"
+
 
 vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
     pattern = "*.mc",

@@ -4,6 +4,7 @@ vim.cmd("source " .. vim.fn.stdpath("config") ..
 
 return {
 	require("config.options"),
+	require("config.highlight-unicode"),
 	require("config.keymaps"),
 	require("config.statusline"),
 }
